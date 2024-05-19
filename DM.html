@@ -1,3 +1,6 @@
+To add a straight line above the meta-info section to separate it from the summary, you can use a border-top property. Here's the modified code:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,12 +41,16 @@
             font-size: 14px;
             color: #bbb;
             margin-bottom: 20px;
-            border-bottom: 1px solid #333;
             padding-bottom: 10px;
             display: flex;
             justify-content: space-between;
             max-width: 800px;
             margin: 0 auto;
+            margin-top: 10px;
+            border-top: 1px solid #333; /* Added border-top */
+        }
+        .meta-info > div {
+            margin-top: 5px;
         }
         h2 {
             font-size: 28px;
@@ -60,7 +67,7 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 0 20px;
-            padding-bottom: 100px; /* Adjusted padding to make space for footer */
+            padding-bottom: 100px;
         }
         .post {
             padding: 20px;
@@ -165,7 +172,7 @@
             <li><a href="#training-inference">Training and Inference in Knowledge Distillation</a></li>
             <li><a href="#applications">Applications in Diffusion Generative Models</a></li>
             <li><a href="#conclusion">Conclusion</a></li>
-            <li><a href="#references">References</a></li>
+            <li><a href="#references">
         </ul>
     </nav>
     <div class="container">
@@ -175,8 +182,6 @@
                 Knowledge distillation is a machine learning technique wherein a smaller, simpler model (the student model) is trained to emulate the performance of a larger, more complex model (the teacher model). This method aims to retain the teacher's performance while using fewer resources.
             </div>
             <div class="meta-info">
-                <p> </p>
-                <hr>
                 <div>Author: BM</div>
                 <div>Estimated Reading Time: 10 min</div>
                 <div>Published: 2020</div>
