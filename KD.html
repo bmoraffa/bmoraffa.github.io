@@ -1,106 +1,29 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta name="generator" content="jemdoc, see http://jemdoc.jaboc.net/" />
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<link rel="stylesheet" href="jemdoc.css" type="text/css" />
-<title> Introduction to Knowledge Distillation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Distillation in Machine Learning</title>
+    <style>
+        .math {
+            font-style: italic;
+        }
+        .equation {
+            font-style: normal;
+        }
+    </style>
 </head>
 <body>
-<table summary="Table for page layout." id="tlayout">
-<tr valign="top">
-<td id="layout-menu">
-<div class="menu-category">Bahman Moraffah</div>
-<div class="menu-item"><a href="index.html">Home</a></div>
-<div class="menu-item"><a href="teaching.html">Teaching</a></div>
-<div class="menu-item"><a href="blog.html">Blog</a></div>
-<div class="menu-item"><a href="tutorials.html">Tutorials</a></div>
-<div class="menu-item"><a href="mybook.html">Books</a></div>
-<div class="menu-item"><a href="bio.html">Awards</a></div>
-<div class="menu-category">Research</div>
-<div class="menu-item"><a href="publication.html">Publications</a></div>
-<div class="menu-item"><a href="presentation.html">Presentations</a></div>
-<div class="menu-item"><a href="group.html">Group</a></div>
-<div class="menu-category">How to do Research?</div>
-<div class="menu-item"><a href="courses.html">What&nbsp;to&nbsp;Study?</a></div>
-<div class="menu-item"><a href="htdr.html">How&nbsp;to&nbsp;Do&nbsp;Research?</a></div>
-<div class="menu-category">Links</div>
-<div class="menu-item"><a href="https://github.com/bmoraffa">GitHub</a></div>
-<div class="menu-item"><a href="https://scholar.google.com Google Scholar">Google&nbsp;Scholar</a></div>
-<div class="menu-item"><a href="https://twitter.com/explore">Twitter</a></div>
-<div class="menu-category">Classes</div>
-<div class="menu-item"><a href="BIM.html">BIM</a></div>
-<div class="menu-item"><a href="EEE554.html">RST</a></div>
-</td>
-<td id="layout-content">
-<div id="toptitle">
-<h1>EEE 202 : Circuits I<br /></h1>
-<div id="subtitle"><a href="index.html" target=&ldquo;blank&rdquo;>Bahman Moraffah</a>, Spring 2020</div>
-</div>
-<h2>General Information:</h2>
-<p>Instructor: Professor <a href="https://bmoraffah.github.io" target=&ldquo;blank&rdquo;>Bahman Moraffah</a><br />
-Office: GWC 333<br />
-Office Hours: MW 3:15-4:15 pm or by appointment <br />
-Class Meet: MW 4:35-5:50 pm in SCOB252 <br />
-Pizza Link: <a href="piazza.com/asu/fall2018/eee202" target=&ldquo;blank&rdquo;>Piazza</a><br />
-Laboratory Web Site: <a href="https://faculty.engineering.asu.edu/eee202lab" target=&ldquo;blank&rdquo;>https:<i></i>faculty.engineering.asu.edu/eee202lab</a><br />
-Email:  <a href="mailto:bahman.moraffah@asu.edu" target=&ldquo;blank&rdquo;>bahman.moraffah@asu.edu</a></p>
-<h2>Course Objectives:</h2>
-<p>At the completion of this course, students will be able to:</p>
-<ul>
-<li><p>Students can apply basic analysis, design, and measurement of linear analog electrical systems and are aware of their importance across engineering disciplines</p>
-</li>
-<li><p>Students can use AC steady-state analysis on linear circuits.</p>
-</li>
-<li><p>Students can use Laplace transforms to analyze linear circuits and characterize linear circuits</p>
-</li>
-<li><p>Students can design linear circuits to implement a desired transfer function</p>
-</li>
-<li><p>Students have knowledge of the application of linear electrical circuits across engineering
-disciplines and within sub-disciplines of electrical engineering.</p>
-</li>
-<li><p>Students are proficient in the measurement of electrical systems.</p>
-</li>
-<li><p>Students can analyze complex DC and AC linear circuits both analytically and with LT-Spice.</p>
-</li>
-<li><p>Students can design simple linear electrical circuits.</p>
-</li>
-<li><p>Students can use AC steady state analysis to find currents and voltages within circuits driven
-by sinusoidal sources</p>
-</li>
-<li><p>Students can apply Laplace transforms correctly and appropriately to analyze linear circuits.</p>
-</li>
-<li><p>Students can relate pole and zero locations to characteristics of time-domain functions</p>
-</li>
-<li><p>Students can analyze linear circuits using key concepts from linear systems theory such as
-transfer functions.</p>
-</li>
-<li><p>Students understand the connection between linear circuits and differential equations.</p>
-</li>
-<li><p>Students can design linear circuits to implement a desired transfer function.</p>
-</li>
-</ul>
-<h2>Syllabus: </h2>
-<p>You can find the syllabus <a href="syllabus_202.pdf" target=&ldquo;blank&rdquo;>here</a></p>
-<h2>Reference:</h2>
-<ul>
-<li><p>(Main Textbook) Basic Engineering Circuits Analysis, 11th Edition, by J. David Irwin and R. Mark Nelms, 2015.</p>
-</li>
-<li><p>Engineering Circuit Analysis, 8th Edition by William H. Hayt, et.al., 2012.</p>
-</li>
-<li><p>Lecture Notes in Circuit Analysis, Bahman Moraffah, 2020 (Notes will be posted on <a href="https://weblogin.asu.edu/cas/login?service=https%3A%2F%2Fcanvas.asu.edu%2Flogin%2Fcas" target=&ldquo;blank&rdquo;>Canvas</a>).</p>
-</li>
-</ul>
-<h2>Laboratory:</h2>
-<p>Each student must register for the lab component of this course as labs are scheduled on set days and times. Labs begin the week of January 21, 2020</p>
-<div id="footer">
-<div id="footer-text">
-Page generated 2020-07-06 12:32:07 MST, by <a href="https://github.com/wsshin/jemdoc_mathjax" target="blank">jemdoc+MathJax</a>.
-</div>
-</div>
-</td>
-</tr>
-</table>
+    <h1>Knowledge Distillation in Machine Learning</h1>
+    <p>Knowledge distillation is a technique in machine learning where a smaller model, known as the <span class="math">student</span> model (<span class="math">S</span>), is trained to replicate the behavior of a larger, more complex model, known as the <span class="math">teacher</span> model (<span class="math">T</span>).</p>
+    <p>The main objective of knowledge distillation is to transfer the knowledge learned by the teacher model to the student model, enabling the student model to achieve comparable performance but with reduced computational resources and memory footprint.</p>
+    <p>During the training process, the student model not only learns to predict the correct outputs but also learns to mimic the soft targets, or probabilities, produced by the teacher model. This is typically achieved by minimizing a loss function that incorporates both the traditional task-specific loss \( L_{task} \) and the distillation loss \( L_{distill} \), which measures the discrepancy between the predictions of the student and teacher models:</p>
+    <p class="equation"><span class="math">\( L = (1 - \alpha) \cdot L_{task} + \alpha \cdot L_{distill} \)</span></p>
+    <p>where \( \alpha \) is a hyperparameter controlling the trade-off between the task-specific loss and the distillation loss.</p>
+    <p>Knowledge distillation has been widely used in scenarios where deploying large models is impractical due to resource constraints, such as on edge devices or in real-time applications. It allows for the creation of efficient and lightweight models that can still achieve high performance by leveraging the knowledge encoded in larger models.</p>
+    <div class="reference">
+        <h2>References</h2>
+        <p>Hinton, G., Vinyals, O., & Dean, J. (2015). Distilling the Knowledge in a Neural Network. <i>arXiv preprint arXiv:1503.02531.</i></p>
+    </div>
 </body>
 </html>
