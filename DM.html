@@ -17,16 +17,29 @@
             display: flex;
         }
         header {
-            background-color: #1f1f1f;
-            color: #fff;
-            padding: 20px;
             text-align: center;
             width: 100%;
-            border-bottom: 2px solid #333;
+            padding: 20px;
+            margin-bottom: 20px;
         }
         h1 {
             font-size: 36px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .summary {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+        .meta-info {
+            font-size: 14px;
+            color: #bbb;
             margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
         }
         h2 {
             font-size: 28px;
@@ -157,6 +170,14 @@
     <div class="container">
         <header>
             <h1>Advanced Knowledge Distillation Techniques and Applications</h1>
+            <div class="summary">
+                Knowledge distillation is a machine learning technique wherein a smaller, simpler model (the student model) is trained to emulate the performance of a larger, more complex model (the teacher model). This method aims to retain the teacher's performance while using fewer resources.
+            </div>
+            <div class="meta-info">
+                <div>Author: BM</div>
+                <div>Estimated Reading Time: 10 min</div>
+                <div>Published: 2020</div>
+            </div>
         </header>
         <div class="post">
             <section id="introduction">
@@ -173,11 +194,10 @@
                     <ul style="text-align: justify;">
                         <li><strong>\( \text{Softmax}(z_i) \)</strong>: Defined as \( \frac{e^{z_i}}{\sum_{j} e^{z_j}} \), where \( z \) are the logits from a model. When scaled by \( T \), the softmax becomes \( \text{Softmax}(z_i/T) = \frac{e^{z_i/T}}{\sum_{j} e^{z_j/T}} \), which adjusts the "sharpness" of the probability distribution based on the value of \( T \).</li>
                         <li><strong>\( L_{CE}(\text{Softmax}(S), Y) \)</strong>: The cross-entropy loss measures the discrepancy between the predicted probabilities \( \text{Softmax}(S) \) of the student and the true labels \( Y \). It is defined mathematically as \( -\sum_{i} Y_i \log(\text{Softmax}(S_i)) \), where \( Y_i \) are the indicator variables for class membership.</li>
-                        <li><strong>\( L_{KL} \)</strong>: The Kullback-Leibler divergence measures how one probability distribution diverges from a second, expected probability distribution. \( L_{KL}(\text{Softmax}(S/T), \text{Softmax}(T/T)) \) quantifies the divergence between the softened outputs of the student and the teacher, promoting similarity in their probabilistic outputs.</li>
+                        <li><strong>\( L_{KL} \)</strong>: The Kullback-Leibler divergence measures how one probability distribution diverges from a second, expected probability distribution. When applied to knowledge distillation, it is defined as \( \sum_{i} \text{Softmax}(T_i/T) \log \left( \frac{\text{Softmax}(T_i/T)}{\text{Softmax}(S_i/T)} \right) \).</li>
                     </ul>
-                    <p>The factor \( T^2 \) in the distillation term compensates for the scaling of the gradients during backpropagation. As the softmax function's temperature \( T \) increases, the gradients produced by the softmax function decrease in magnitude, since the output probabilities become softer and less confident. The \( T^2 \) term amplifies these smaller gradients to ensure that they are substantial enough to guide the student model effectively.</p>
-                    <p>Substituting these definitions into the loss function, we get:</p>
-                    <p class="equation">\[ L = (1 - \alpha) \cdot (-\sum_{i} Y_i \log(\text{Softmax}(S_i))) + \alpha \cdot T^2 \cdot \sum_{i} \text{Softmax}(T_i/T) \log \left( \frac{\text{Softmax}(T_i/T)}{\text{Softmax}(S_i/T)} \right) \]</p>
+                    <p>Thus, the total loss function \( L \) effectively balances the learning from true labels and the teacher's outputs, controlled by the temperature \( T \) and weighting factor \( \alpha \):</p>
+                    <p class="equation">\[ L = (1 - \alpha) \cdot \sum_{i} Y_i \log(\text{Softmax}(S_i)) + \alpha \cdot T^2 \cdot \sum_{i} \text{Softmax}(T_i/T) \log \left( \frac{\text{Softmax}(T_i/T)}{\text{Softmax}(S_i/T)} \right) \]</p>
                     <p>This combined loss function encourages the student model to learn from both the hard labels and the soft outputs of the teacher model, enabling it to achieve high performance despite its reduced complexity.</p>
                 </section>
                 <section id="model-compression">
@@ -211,7 +231,7 @@
     <footer>
         <div>&copy; BM's Blog. All Rights Reserved.</div>
         <div class="social-icons">
-            <a href="https://www.linkedin.com" target="_blank"><img src="https://commons.wikimedia.org/wiki/File:LinkedIn_logo_initials.png" alt="LinkedIn"></a>
+            <a href="https://www.linkedin.com" target="_blank"><img src="https://image.flaticon.com/icons/png/512/174/174857.png" alt="LinkedIn"></a>
             <a href="https://scholar.google.com" target="_blank"><img src="https://image.flaticon.com/icons/png/512/300/300221.png" alt="Google Scholar"></a>
             <a href="https://github.com" target="_blank"><img src="https://image.flaticon.com/icons/png/512/733/733609.png" alt="GitHub"></a>
             <a href="https://twitter.com" target="_blank"><img src="https://image.flaticon.com/icons/png/512/733/733579.png" alt="Twitter"></a>
