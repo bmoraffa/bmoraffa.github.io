@@ -82,8 +82,8 @@
             <p>The main objective of knowledge distillation is to transfer the knowledge learned by the teacher model to the student model, enabling the student model to achieve comparable performance but with reduced computational resources and memory footprint.</p>
             <p>During the training process, the student model not only learns to predict the correct outputs but also learns to mimic the soft targets, or probabilities, produced by the teacher model. This is typically achieved by minimizing a loss function that incorporates both the traditional task-specific loss <span class="math">L<sub>task</sub></span> and the distillation loss <span class="math">L<sub>distill</sub></span>, which measures the discrepancy between the predictions of the student and teacher models:</p>
             <p class="equation">\[ L = (1 - \alpha) \cdot L_{task} + \alpha \cdot L_{distill} \]</p>
-            <p>where <span class="math">α</span> is a hyperparameter controlling the trade-off between the task-specific loss and the distillation loss.</p>
-            <p>Knowledge distillation has been widely used in scenarios where deploying large models is impractical due to resource constraints, such as on edge devices or in real-time applications. It allows for the creation of efficient and lightweight models that can still achieve high performance by leveraging the knowledge encoded in larger models.</p>
+            <p>where <span class="math"> \(\alpha\)</span> is a hyperparameter controlling the trade-off between the task-specific loss and the distillation loss.</p>
+            <p>Knowledge distillation has been widely used in scenarios where deploying large models is impractical due to resource constraints, such as on-edge devices or in real-time applications. It allows for the creation of efficient and lightweight models that can still achieve high performance by leveraging the knowledge encoded in larger models.</p>
         </div>
         <div class="reference">
             <h2>References</h2>
