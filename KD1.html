@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Knowledge Distillation in Machine Learning</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,6 +25,14 @@
             font-size: 36px;
             margin-bottom: 20px;
         }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
         .container {
             max-width: 800px;
             margin: 20px auto;
@@ -41,6 +51,10 @@
             line-height: 1.6;
             margin-bottom: 15px;
         }
+        .math {
+            font-style: italic;
+            font-family: serif;
+        }
         .reference {
             margin-top: 20px;
         }
@@ -56,11 +70,12 @@
         footer {
             background-color: #333;
             color: #fff;
-            text-align: center;
-            padding: 10px 0;
+            text-align: right;
+            padding: 10px 20px;
             position: fixed;
             bottom: 0;
-            width: 100%;
+            right: 0;
+            width: calc(100% - 40px);
             z-index: 999;
         }
     </style>
@@ -71,16 +86,34 @@
     </header>
     <div class="container">
         <div class="post">
-            <p>Knowledge distillation is a technique in machine learning where a smaller model, known as the <span class="math">student</span> model (<span class="math">S</span>), is trained to replicate the behavior of a larger, more complex model, known as the <span class="math">teacher</span> model (<span class="math">T</span>).</p>
-            <p>The main objective of knowledge distillation is to transfer the knowledge learned by the teacher model to the student model, enabling the student model to achieve comparable performance but with reduced computational resources and memory footprint.</p>
-            <p>During the training process, the student model not only learns to predict the correct outputs but also learns to mimic the soft targets, or probabilities, produced by the teacher model. This is typically achieved by minimizing a loss function that incorporates both the traditional task-specific loss \( L_{task} \) and the distillation loss \( L_{distill} \), which measures the discrepancy between the predictions of the student and teacher models:</p>
-            <p class="equation">\( L = (1 - \alpha) \cdot L_{task} + \alpha \cdot L_{distill} \)</p>
-            <p>where \( \alpha \) is a hyperparameter controlling the trade-off between the task-specific loss and the distillation loss.</p>
-            <p>Knowledge distillation has been widely used in scenarios where deploying large models is impractical due to resource constraints, such as on edge devices or in real-time applications. It allows for the creation of efficient and lightweight models that can still achieve high performance by leveraging the knowledge encoded in larger models.</p>
+            <section>
+                <h2>Introduction</h2>
+                <p>Knowledge distillation is a technique in machine learning where a smaller model, known as the <span class="math">student</span> model (<span class="math">S</span>), is trained to replicate the behavior of a larger, more complex model, known as the <span class="math">teacher</span> model (<span class="math">T</span>).</p>
+            </section>
+            <section>
+                <h2>Objective</h2>
+                <p>The main objective of knowledge distillation is to transfer the knowledge learned by the teacher model to the student model, enabling the student model to achieve comparable performance but with reduced computational resources and memory footprint.</p>
+            </section>
+            <section>
+                <h2>Training Process</h2>
+                <p>During the training process, the student model not only learns to predict the correct outputs but also learns to mimic the soft targets, or probabilities, produced by the teacher model.</p>
+                <subsection>
+                    <h3>Loss Function</h3>
+                    <p>The training of the student model involves minimizing a loss function that incorporates both the traditional task-specific loss \( L_{task} \) and the distillation loss \( L_{distill} \).</p>
+                    <p class="equation">\[ L = (1 - \alpha) \cdot L_{task} + \alpha \cdot L_{distill} \]</p>
+                    <p>where \( \alpha \) is a hyperparameter controlling the trade-off between the task-specific loss and the distillation loss.</p>
+                </subsection>
+            </section>
+            <section>
+                <h2>Applications</h2>
+                <p>Knowledge distillation has been widely used in scenarios where deploying large models is impractical due to resource constraints, such as on edge devices or in real-time applications. It allows for the creation of efficient and lightweight models that can still achieve high performance by leveraging the knowledge encoded in larger models.</p>
+            </section>
         </div>
         <div class="reference">
             <h2>References</h2>
-            <p>Hinton, G., Vinyals, O., & Dean, J. (2015). Distilling the Knowledge in a Neural Network. <i>arXiv preprint arXiv:1503.02531.</i></p>
+            <p>Hinton, G., Vinyals, O., & Dean, J. (2015). <a href="https://arxiv.org/abs/1503.02531">Distilling the Knowledge in a Neural Network</a>.</p>
+            <p>Romero, A., Ballas, N., Kahou, S. E., Chassang, A., Gatta, C., & Bengio, Y. (2014). <a href="https://arxiv.org/abs/1412.6550">FitNets: Hints for Thin Deep Nets</a>.</p>
+            <p>Zagoruyko, S., & Komodakis, N. (2016). <a href="https://arxiv.org/abs/1610.01178">Paying More Attention to Attention: Improving the Performance of Convolutional Neural Networks via Attention Transfer</a>.</p>
         </div>
     </div>
     <footer>
