@@ -8,49 +8,53 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f8f8f8;
-            color: #333;
+            background-color: #121212;
+            color: #e0e0e0;
             display: flex;
         }
         header {
-            background-color: #333;
+            background-color: #1f1f1f;
             color: #fff;
             padding: 20px;
             text-align: center;
             width: 100%;
+            border-bottom: 2px solid #333;
         }
         h1 {
             font-size: 36px;
             margin-bottom: 20px;
         }
         h2 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
         }
         h3 {
-            font-size: 20px;
+            font-size: 24px;
             margin-bottom: 10px;
+            color: #bbb;
         }
         .container {
             max-width: 800px;
             margin: 20px auto;
             padding: 0 20px;
-            padding-bottom: 80px; /* Adjusted padding to make space for footer */
+            padding-bottom: 100px; /* Adjusted padding to make space for footer */
         }
         .post {
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             padding: 20px;
             margin-bottom: 20px;
         }
         .post p {
             font-size: 16px;
-            line-height: 1.6;
+            line-height: 1.8;
             margin-bottom: 15px;
             text-align: justify;
         }
@@ -71,7 +75,7 @@
             margin-bottom: 15px;
         }
         footer {
-            background-color: #333;
+            background-color: #1f1f1f;
             color: #fff;
             text-align: right;
             padding: 10px 20px;
@@ -83,6 +87,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top: 2px solid #333;
         }
         footer .social-icons {
             display: flex;
@@ -101,15 +106,19 @@
             top: 20px;
             left: 20px;
             width: 200px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             padding: 10px;
             box-sizing: border-box;
+            border: 2px solid #333;
         }
         nav h2 {
-            font-size: 18px;
+            font-size: 20px;
             margin-top: 0;
+            color: #fff;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
         }
         nav ul {
             list-style: none;
@@ -120,11 +129,14 @@
         }
         nav ul li a {
             text-decoration: none;
-            color: #333;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: color 0.3s;
         }
-        nav ul li a.active {
+        nav ul li a.active,
+        nav ul li a:hover {
             font-weight: bold;
-            color: #007BFF;
+            color: #1e90ff;
         }
     </style>
 </head>
@@ -165,18 +177,18 @@
                     </ul>
                     <p>The factor \( T^2 \) in the distillation term compensates for the scaling of the gradients during backpropagation. As the softmax function's temperature \( T \) increases, the gradients produced by the softmax function decrease in magnitude, since the output probabilities become softer and less confident. The \( T^2 \) term amplifies these smaller gradients to ensure that they are substantial enough to guide the student model effectively.</p>
                     <p>Substituting these definitions into the loss function, we get:</p>
-                    <p class="equation">\[ L = (1 - \alpha) \cdot (-\sum_{i} Y_i \log(\text{Softmax}(S_i))) + \alpha \cdot T^2 \cdot \sum_i (\text{Softmax}(S_i/T) \log(\frac{\text{Softmax}(S_i/T)}{\text{Softmax}(T_i/T)})) \]</p>
+                    <p class="equation">\[ L = (1 - \alpha) \cdot (-\sum_{i} Y_i \log(\text{Softmax}(S_i))) + \alpha \cdot T^2 \cdot \sum_{i} \text{Softmax}(T_i/T) \log \left( \frac{\text{Softmax}(T_i/T)}{\text{Softmax}(S_i/T)} \right) \]</p>
+                    <p>This combined loss function encourages the student model to learn from both the hard labels and the soft outputs of the teacher model, enabling it to achieve high performance despite its reduced complexity.</p>
                 </section>
                 <section id="model-compression">
-                    <h2>Model Compression and Knowledge Distillation</h2>
-                    <p>Model compression is a technique aimed at reducing the computational complexity of a machine learning model while attempting to retain its performance. It involves creating a smaller, faster, and more efficient model from a larger, more complex one. A popular method for achieving this is through knowledge distillation.</p>
+                    <h3>Model Compression and Knowledge Distillation</h3>
+                    <p>Model compression involves reducing the size or complexity of a model while maintaining its performance. This can be particularly important for deploying models on devices with limited computational resources, such as smartphones or embedded systems. Knowledge distillation is a popular method for achieving this, as it allows a smaller model to learn from the outputs of a larger, more complex one.</p>
                     <p>In the context of knowledge distillation, model compression can be mathematically represented as a transformation \( C \) applied to a teacher model \( T \) to produce a student model \( S \). The goal is to minimize the performance difference between the teacher and the student while reducing the model's size or complexity:</p>
                     <p class="equation">\[ S = C(T) \]</p>
-                    <p>\[ \text{minimize} \, L(S, T) \]</p>
                     <p>Here, \( L(S, T) \) could be any suitable loss function that measures the discrepancy between the outputs of \( S \) and \( T \), such as cross-entropy or KL divergence. Knowledge distillation specifically aims to align the functional behaviors of \( S \) and \( T \) by training \( S \) to emulate the soft outputs of \( T \), effectively compressing \( T \) into a more manageable size with comparable performance.</p>
                 </section>
                 <section id="training-inference">
-                    <h2>Training and Inference in Knowledge Distillation</h2>
+                    <h3>Training and Inference in Knowledge Distillation</h3>
                     <p>The training of a distilled model involves alternating focus between learning from hard targets using cross-entropy and mimicking the teacher's softened outputs via the KL divergence. The balance between these learning objectives is modulated by the hyperparameter \( \alpha \), while the temperature \( T \) controls the softening of the outputs, making them more or less influential depending on their settings.</p>
                     <p>During inference, the student model operates independently, using its learned parameters to make predictions. Despite its reduced size and complexity, the distilled model retains much of the teacher model's effectiveness, allowing it to perform well in environments where computational resources are limited.</p>
                 </section>
@@ -192,8 +204,8 @@
         </div>
         <section id="references" class="reference">
             <h2>References</h2>
-            <p>[1] Hinton, G., Vinyals, O., & Dean, J. (2015). <a href="https://arxiv.org/abs/1503.02531">Distilling the Knowledge in a Neural Network</a>.</p>
-            <p>[2] Romero, A., Ballas, N., Kahou, S. E., Chassang, A., Gatta, C., & Bengio, Y. (2014). <a href="https://arxiv.org/abs/1412.6550">FitNets: Hints for Thin Deep Nets</a>.</p>
+            <p>[1] Hinton, G., Vinyals, O., & Dean, J. (2015). <a href="https://arxiv.org/abs/1503.02531" target="_blank">Distilling the Knowledge in a Neural Network</a>.</p>
+            <p>[2] Romero, A., Ballas, N., Kahou, S. E., Chassang, A., Gatta, C., & Bengio, Y. (2014). <a href="https://arxiv.org/abs/1412.6550" target="_blank">FitNets: Hints for Thin Deep Nets</a>.</p>
         </section>
     </div>
     <footer>
