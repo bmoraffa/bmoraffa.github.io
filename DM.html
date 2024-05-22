@@ -174,9 +174,9 @@
                 This article provides an in-depth look at the mechanisms of forward and reverse processes in diffusion models, exploring how they are used to train and generate data effectively.
             </div>
             <div class="meta-info">
-                <div>Author: Your Name</div>
+                <div>Author: Bahman Moraffah</div>
                 <div>Estimated Reading Time: 20 min</div>
-                <div>Published: 2024</div>
+                <div>Published: 2021</div>
             </div>
         </header>
 
@@ -207,7 +207,7 @@
                 <p class="math">\[
                   \Sigma_{\lambda'| \lambda} = \exp((1-\nu) \log \tilde{\sigma}^2_{\lambda'|\lambda} + \nu \log \sigma^2_{\lambda'|\lambda}),
                 \]</p>
-                <p>where \( \Sigma_{\lambda'| \lambda}\) is the interpolated variance, as discussed in equation \ref{eq:var_inter}. The hyperparameter \( \nu\) weights how much the direct step variance versus the target level variance contributes to the transition. It is worth emphasizing that during inference runs in an increasing sequence of \( \lambda\), from higher noise to low noise and clean data.</p>
+                <p>where \( \Sigma_{\lambda'| \lambda}\) is the interpolated variance, as discussed in [2]. The hyperparameter \( \nu\) weights how much the direct step variance versus the target level variance contributes to the transition. It is worth emphasizing that during inference runs in an increasing sequence of \( \lambda\), from higher noise to low noise and clean data.</p>
             </section>
             <section id="training-model">
                 <h2>Training the Model</h2>
@@ -224,8 +224,10 @@
         </div>
         <section id="references" class="reference">
             <h2>References</h2>
-            <p>[1] Reference details...</p>
-            <p>[2] Reference details...</p>
+            <p>[1] Ho, Jonathan, Ajay Jain, and Pieter Abbeel. "Denoising diffusion probabilistic models." Advances in neural information processing systems 33 (2020): 6840-6851.</p>
+            <p>[2] Nichol, Alexander Quinn, and Prafulla Dhariwal. "Improved denoising diffusion probabilistic models." In International conference on machine learning, pp. 8162-8171. PMLR, 2021.</p>
+            <p>[3] Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. "Score-based generative modeling through stochastic differential equations." arXiv preprint arXiv:2011.13456 (2020).</p>
+            <p>[4] Sohl-Dickstein, Jascha, Eric Weiss, Niru Maheswaranathan, and Surya Ganguli. "Deep unsupervised learning using nonequilibrium thermodynamics." In International conference on machine learning, pp. 2256-2265. PMLR, 2015. </p>
         </section>
     </div>
     <footer>
