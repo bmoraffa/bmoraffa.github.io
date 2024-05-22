@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Knowledge Distillation Techniques and Applications</title>
+    <title>Diffusion Models: Understanding Forward and Reverse Processes</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
@@ -160,86 +160,78 @@
     <nav id="toc">
         <h2>Contents</h2>
         <ul>
-            <li><a href="#introduction">Introduction</a></li>
-            <li><a href="#detailed-explanation">Detailed Explanation of Knowledge Distillation</a></li>
-            <li><a href="#loss-function">Loss Function</a></li>
-            <li><a href="#model-compression">Model Compression and Knowledge Distillation</a></li>
-            <li><a href="#training-inference">Training and Inference in Knowledge Distillation</a></li>
-            <li><a href="#applications">Applications in Diffusion Generative Models</a></li>
-            <li><a href="#conclusion">Conclusion</a></li>
+            <li><a href="#forward-process">Forward Process</a></li>
+            <li><a href="#reverse-process">Reverse Process</a></li>
+            <li><a href="#training-model">Training the Model</a></li>
+            <li><a href="#model-inference">Model Inference</a></li>
             <li><a href="#references">References</a></li>
         </ul>
     </nav>
     <div class="container">
         <header>
-            <h1>Advanced Knowledge Distillation Techniques and Applications</h1>
+            <h1>Diffusion Models: Understanding Forward and Reverse Processes</h1>
             <div class="summary">
-                Knowledge distillation is a machine learning technique wherein a smaller, simpler model (the student model) is trained to emulate the performance of a larger, more complex model (the teacher model). This method aims to retain the teacher's performance while using fewer resources.
+                This article provides an in-depth look at the mechanisms of forward and reverse processes in diffusion models, exploring how they are used to train and generate data effectively.
             </div>
-            <div class="section-divider"></div>
             <div class="meta-info">
-                <div>Author: Bahman Moraffah</div>
-                <div>Estimated Reading Time: 10 min</div>
-                <div>Published: 2020</div>
+                <div>Author: Your Name</div>
+                <div>Estimated Reading Time: 20 min</div>
+                <div>Published: 2024</div>
             </div>
         </header>
 
         <div class="post">
-            <section id="introduction">
-                <h2>Introduction</h2>
-                <p>Knowledge distillation is a machine learning technique wherein a smaller, simpler model (the <span class="math">student</span> model) is trained to emulate the performance of a larger, more complex model (the <span class="math">teacher</span> model). This method aims to retain the teacher's performance while using fewer resources.</p>
+            <section id="forward-process">
+                <h2>Forward Process</h2>
+                <p>Recall that the continuous diffusion models transform data \( x \) drawn from a distribution \( p_\text{data}(x) \) through a variance-preserving Markov process known as forward process. The forward process introduces noise to the data over a sequence of continuous time steps \( \lambda \in [ \lambda_{\text{min}}, \lambda_{\text{max}}] \), \( \lambda_{\text{min}} < \lambda_{\text{max}} \),</p>
+                <p class="math">\[
+                   q(z_\lambda|x) = \mathcal{N}(\alpha_\lambda x, \sigma_\lambda^2 I),
+                \]</p>
+                <p>where \( \alpha_\lambda^2 = \frac{1}{1 + e^{-\lambda}} \) and \( \sigma_\lambda^2 = 1 - \alpha_\lambda^2 \). For intermediate values of \( \lambda \), i.e., transitioning from one noise level to a higher one, the transition is modeled as</p>
+                <p class="math">\[
+                   q(z_\lambda|z_{\lambda'}) = \mathcal{N}\left(\left(\frac{\alpha_\lambda}{\alpha_{\lambda'}}\right) z_{\lambda'}, \sigma_{\lambda|\lambda'}^2 I\right),
+                \]</p>
+                <p>where \( \sigma_{\lambda|\lambda'}^2 = (1 - e^{\lambda-\lambda'})\sigma_\lambda^2 \) and \( \lambda < \lambda' \), which means the forward process goes in the direction of decreasing \( \lambda \). Conditioning on \( x \), the forward process is</p>
+                <p class="math">\[
+                     q(z_{\lambda'}|z_{\lambda}, x) = \mathcal{N}(\mu_{\lambda'|\lambda}(z_{\lambda}, x), \sigma^2_{\lambda'|\lambda} I),
+                \]</p>
+                <p>where \( \mu_{\lambda'|\lambda}(z_{\lambda}, x) = e^{\lambda - \lambda'}\left(\frac{\alpha_{\lambda'}}{\alpha_{\lambda}} z_{\lambda} + (1 - e^{\lambda - \lambda'})\alpha_{\lambda'} x\right)\), and \( \sigma_{\lambda|\lambda'}^2 = (1 - e^{\lambda-\lambda'})\sigma_\lambda^2 \), decreasing \( \lambda \).</p>
             </section>
-            <section id="detailed-explanation"> 
-                <h2>Detailed Explanation of Knowledge Distillation</h2>
-                <p>Knowledge distillation is a technique where a compact, less complex student model learns from both the categorical labels and the soft outputs (class probabilities) generated by a more robust teacher model. This approach enables the student model to mimic the sophisticated decision boundaries learned by the teacher, thus preserving performance with less computational overhead.</p>
-                <section id="loss-function">
-                    <h3>Loss Function</h3>
-                    <p>The loss function in knowledge distillation combines cross-entropy loss and a distillation loss, facilitating learning from both categorical labels and soft targets:</p>
-                    <p class="equation">\[ L = (1 - \alpha) \cdot L_{CE}(\text{Softmax}(S), Y) + \alpha \cdot T^2 \cdot L_{KL}(\text{Softmax}(S/T), \text{Softmax}(T/T)) \]</p>
-                    <ul style="text-align: justify;">
-                        <li><strong>\( \text{Softmax}(z_i) \)</strong>: Defined as \( \frac{e^{z_i}}{\sum_{j} e^{z_j}} \), where \( z \) are the logits from a model. When scaled by \( T \), the softmax becomes \( \text{Softmax}(z_i/T) = \frac{e^{z_i/T}}{\sum_{j} e^{z_j/T}} \), which adjusts the "sharpness" of the probability distribution based on the value of \( T \).</li>
-                        <li><strong>\( L_{CE}(\text{Softmax}(S), Y) \)</strong>: The cross-entropy loss measures the discrepancy between the predicted probabilities \( \text{Softmax}(S) \) of the student and the true labels \( Y \). It is defined mathematically as \( -\sum_{i} Y_i \log(\text{Softmax}(S_i)) \), where \( Y_i \) are the indicator variables for class membership.</li>
-                        <li><strong>\( L_{KL} \)</strong>: The Kullback-Leibler divergence measures how one probability distribution diverges from a second, expected probability distribution. When applied to knowledge distillation, it is defined as \( \sum_{i} \text{Softmax}(T_i/T) \log \left( \frac{\text{Softmax}(T_i/T)}{\text{Softmax}(S_i/T)} \right) \).</li>
-                    </ul>
-                    <p>Thus, the total loss function \( L \) effectively balances the learning from true labels and the teacher's outputs, controlled by the temperature \( T \) and weighting factor \( \alpha \):</p>
-                    <p class="equation">\[ L = (1 - \alpha) \cdot \sum_{i} Y_i \log(\text{Softmax}(S_i)) + \alpha \cdot T^2 \cdot \sum_{i} \text{Softmax}(T_i/T) \log \left( \frac{\text{Softmax}(T_i/T)}{\text{Softmax}(S_i/T)} \right) \]</p>
-                    <p>This combined loss function encourages the student model to learn from both the hard labels and the soft outputs of the teacher model, enabling it to achieve high performance despite its reduced complexity.</p>
-                </section>
-                <section id="model-compression">
-                    <h3>Model Compression and Knowledge Distillation</h3>
-                    <p>Model compression involves reducing the size or complexity of a model while maintaining its performance. This can be particularly important for deploying models on devices with limited computational resources, such as smartphones or embedded systems. Knowledge distillation is a popular method for achieving this, as it allows a smaller model to learn from the outputs of a larger, more complex one.</p>
-                    <p>In the context of knowledge distillation, model compression can be mathematically represented as a transformation \( C \) applied to a teacher model \( T \) to produce a student model \( S \). The goal is to minimize the performance difference between the teacher and the student while reducing the model's size or complexity:</p>
-                    <p class="equation">\[ S = C(T) \]</p>
-                    <p>Here, \( L(S, T) \) could be any suitable loss function that measures the discrepancy between the outputs of \( S \) and \( T \), such as cross-entropy or KL divergence. Knowledge distillation specifically aims to align the functional behaviors of \( S \) and \( T \) by training \( S \) to emulate the soft outputs of \( T \), effectively compressing \( T \) into a more manageable size with comparable performance.</p>
-                </section>
-                <section id="training-inference">
-                    <h3>Training and Inference in Knowledge Distillation</h3>
-                    <p>The training of a distilled model involves alternating focus between learning from hard targets using cross-entropy and mimicking the teacher's softened outputs via the KL divergence. The balance between these learning objectives is modulated by the hyperparameter \( \alpha \), while the temperature \( T \) controls the softening of the outputs, making them more or less influential depending on their settings.</p>
-                    <p>During inference, the student model operates independently, using its learned parameters to make predictions. Despite its reduced size and complexity, the distilled model retains much of the teacher model's effectiveness, allowing it to perform well in environments where computational resources are limited.</p>
-                </section>
+            <section id="reverse-process">
+                <h2>Reverse Process</h2>
+                <p>The reverse process is described by Gaussian transitions to generate samples progressively from standard Gaussian noise, \(p_\theta(z_{\lambda_\text{min}}) \sim \mathcal{N}(0,I)\), and uses neural networks to parameterize the reverse process,</p>
+                <p class="math">\[
+                p_\theta(z_{\lambda'}|z_\lambda) = \mathcal{N}(\tilde{\mu}_{\lambda'|\lambda}(z_\lambda, x_\theta(z_\lambda, \lambda)), (\tilde{\sigma}^2_{\lambda'|\lambda})^{1-\nu}(\sigma^2_{\lambda'|\lambda})^\nu),
+                \]</p>
+                <p>where \(x_\theta(z_\lambda, \lambda) = \frac{z_\lambda - \sigma_\lambda \epsilon_\theta(z_\lambda, \lambda)}{\alpha_\lambda}\) represents a neural network that estimate of the original data \(x\) given a particular noisy observation \(z_\lambda\), \( \epsilon_\theta(z_\lambda, \lambda) \) is another neural network or the same network with different outputs, predicting the noise component added at the diffusion step characterized by \( \lambda \) and \( \sigma_\lambda \) and \( \alpha_\lambda \) are coefficients that define how the noise scales and the data is attenuated during the forward process at noise level \( \lambda \). The variance \( \sigma^2_{\lambda'| \lambda}\) for the reverse transition from \(z_\lambda\) to \(z_{\lambda'}\), where \( \lambda' > \lambda\) indicates a move towards lower noise levels,  can be a function of the variances at each of these noise levels,</p>
+                <p class="math">\[
+                  \Sigma_{\lambda'| \lambda} = \exp((1-\nu) \log \tilde{\sigma}^2_{\lambda'|\lambda} + \nu \log \sigma^2_{\lambda'|\lambda}),
+                \]</p>
+                <p>where \( \Sigma_{\lambda'| \lambda}\) is the interpolated variance, as discussed in equation \ref{eq:var_inter}. The hyperparameter \( \nu\) weights how much the direct step variance versus the target level variance contributes to the transition. It is worth emphasizing that during inference runs in an increasing sequence of \( \lambda\), from higher noise to low noise and clean data.</p>
             </section>
-            <section id="applications">
-                <h2>Applications in Diffusion Generative Models</h2>
-                <p>Knowledge distillation has been increasingly applied in the training of diffusion generative models. By distilling the knowledge from a high-fidelity generative model into a simpler one, it is possible to significantly reduce the computational complexity needed to generate new samples while maintaining high quality.</p>
+            <section id="training-model">
+                <h2>Training the Model</h2>
+                <p>To train this model, we minimize the discrepancy between the noise added in the forward process and the noise estimated by the model,</p>
+                <p class="math">\[
+                     \mathbb{E}_{\epsilon \sim \mathcal{N}(0, I), \lambda\sim p(\lambda)} \left[ \| \epsilon_{\theta}(z_{\lambda, \lambda}) - \epsilon \|_2^2 \right],
+                \]</p>
+                <p>where \( p(\lambda) \) is a distribution over \([\lambda_\text{min}, \lambda_\text{max} ]\),  \(\epsilon\) is the noise used in the forward process, \( \epsilon_{\theta}(z_{\lambda}, \lambda) \) is the model estimate of this noise, and \(z_\lambda = \alpha_\lambda x + \sigma_\lambda \epsilon\). This is a form of denoising score matching that helps the model learn to reverse the noise addition accurately.  The distribution of \( \lambda \) can affect the training dynamics and the focus on different noise levels. A specific scheduling, such as the cosine noise schedule, modulates \( \lambda \) values across the training and influences the distribution and variance of the noise levels encountered. Uniform distribution on \(\lambda\) results in the objective being proportional to the variational lower bound on the marginal log likelihood of the latent variable model.</p>
             </section>
-            <section id="conclusion">
-                <h2>Conclusion</h2>
-                <p>Knowledge distillation provides a powerful solution for deploying complex machine learning models in resource-constrained environments, thereby broadening the accessibility and application of advanced AI technologies.</p>
+            <section id="model-inference">
+                <h2>Model Inference</h2>
+                <p>Once trained, sampling from the model involves running the reverse process using the predicted noise values to progressively denoise the data. This process uses Langevin dynamics where samples are drawn progressively closer to the distribution of the original dataset \( p_\text{data}(x)\).</p>
             </section>
         </div>
         <section id="references" class="reference">
             <h2>References</h2>
-            <p>[1] Hinton, G., Vinyals, O., & Dean, J. (2015). <a href="https://arxiv.org/abs/1503.02531" target="_blank">Distilling the Knowledge in a Neural Network</a>.</p>
-            <p>[2] Romero, A., Ballas, N., Kahou, S. E., Chassang, A., Gatta, C., & Bengio, Y. (2014). <a href="https://arxiv.org/abs/1412.6550" target="_blank">FitNets: Hints for Thin Deep Nets</a>.</p>
+            <p>[1] Reference details...</p>
+            <p>[2] Reference details...</p>
         </section>
     </div>
     <footer>
         <div>&copy; BM's Blog. All Rights Reserved.</div>
         <div class="social-icons">
-            <a href="https://www.linkedin.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn"></a>
-            <a href="https://scholar.google.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Google_Scholar_logo.png" alt="Google Scholar"></a>
-            <a href="https://github.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub"></a>
-            <a href="https://twitter.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter"></a>
+            <!-- Add your social media icons and links here -->
         </div>
     </footer>
     <script>
