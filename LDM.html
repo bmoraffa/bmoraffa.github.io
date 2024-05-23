@@ -81,6 +81,51 @@
             font-style: italic;
             font-family: serif;
         }
+        pre code {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid #333;
+        }
+        nav h2 {
+            font-size: 20px;
+            margin-top: 0;
+            color: #fff;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            margin-bottom: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        nav ul li a.active,
+        nav ul li a:hover {
+            font-weight: bold;
+            color: #1e90ff;
+        }
         footer {
             background-color: #1f1f1f;
             color: #fff;
@@ -108,6 +153,15 @@
     </style>
 </head>
 <body>
+    <nav id="toc">
+        <h2>Contents</h2>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#training">Training</a></li>
+            <li><a href="#algorithm">Conditional Generation with LDMs</a></li>
+        </ul>
+    </nav>
     <div class="container">
         <header>
             <h1>Latent Diffusion Models</h1>
@@ -117,35 +171,42 @@
             <div class="section-divider"></div>
             <div class="meta-info">
                 <div>Author: Bahman Moraffah</div>
-                <div>Estimated Reading Time: 15 min</div>
-                <div>Published: 2021</div>
+                <div>Estimated Reading Time: 10 min</div>
+                <div>Published: 2024</div>
             </div>
         </header>
         <!-- Article content -->
         <div class="post">
             <section id="introduction">
                 <h2>Introduction</h2>
-                <p>Latent Diffusion Models are generative models that extend diffusion models to a latent space. Traditional diffusion models denoise samples from a noise distribution to produce target data samples. LDMs do this in a compressed latent space, leading to computational efficiency and effective handling of high-dimensional data. For more details, see Section <span class="math">\ref{sec:ldms}</span>.</p>
+                <p>Latent Diffusion Models (LDMs) are a class of generative models that extend the idea of diffusion models to a latent space. Traditional diffusion models involve denoising a sample from a simple noise distribution (e.g., Gaussian) to produce a sample from the target data distribution, guided by a learned denoising function. LDMs apply this concept in a compressed latent space, leading to computational efficiency and better handling of high-dimensional data. Detailed discussions on LDMs can be found in Section <span class="math">\ref{sec:ldms}</span>.</p>
             </section>
             <section id="overview">
                 <h2>Overview</h2>
-                <p>The core idea of LDMs is to map between data space (\(X\)) and latent space (\(Z\)) using an encoder \(E: X \rightarrow Z\) and a decoder \(D: Z \rightarrow X\).</p>
-                <p>The diffusion process in latent space involves a forward process that adds noise to a latent variable \(z_0\), producing noisy latents \(z_1, z_2, \ldots, z_T\), modeled by \(q(z_{t+1}|z_t)\). The reverse process denoises these latents back to the original signal using \(p_\theta(z_{t-1}|z_t)\), where \(\theta\) are the model parameters.</p>
+                <p>The core idea of LDMs is to learn a mapping between the data space and a lower-dimensional latent space. Let \(X\) denote the data space and \(Z\) the latent space. The mapping consists of an encoder \(E: X \rightarrow Z\) and a decoder \(D: Z \rightarrow X\).</p>
+                <p>The diffusion process in the latent space is defined by a forward process and a reverse process. The forward process gradually adds noise to a latent variable \(z_0\) to produce a sequence of increasingly noisy latents \(z_1, z_2, \ldots, z_T\). This is modeled by a Markov chain with transition probabilities \(q(z_{t+1}|z_t)\).</p>
+                <p>The reverse process aims to denoise the latent variables back to the original signal. It is defined by a reverse Markov chain with transition probabilities \(p_\theta(z_{t-1}|z_t)\), where \(\theta\) are the parameters of the model learned during training.</p>
             </section>
             <section id="training">
                 <h2>Training</h2>
-                <p>The training objective is to maximize the likelihood of the reverse process. This is typically done using a variational lower bound on the log-likelihood, leading to a loss function with a reconstruction term and a KL-divergence term:</p>
-                <p class="math"> \[ \mathcal{L}(\theta) = \mathbb{E}_{q(z|x)}[\log p_\theta(x|z)] - \beta \cdot D_{KL}(q(z|x) || p(z)), \]</p>
-                <p>where \(x\) is a data sample, \(z\) is its latent representation, \(p_\theta(x|z)\) is the likelihood of the data given the latents, \(q(z|x)\) is the approximate posterior (encoder), \(p(z)\) is the prior over the latents, and \(\beta\) controls the trade-off between terms.</p>
+                <p>The training objective for LDMs is to learn the parameters \(\theta\) that maximize the likelihood of the reverse process. This is typically done using a variational lower bound on the log-likelihood, leading to a loss function similar to that used in variational autoencoders (VAEs). The loss function can be decomposed into a reconstruction term and a KL-divergence term:</p>
+                <p class="math">\[\mathcal{L}(\theta) = \mathbb{E}_{q(z|x)}[\log p_\theta(x|z)] - \beta \cdot D_{KL}(q(z|x) || p(z)),\]</p>
+                <p>where \(x\) is a data sample, \(z\) is its latent representation, \(p_\theta(x|z)\) is the likelihood of the data given the latents, \(q(z|x)\) is the approximate posterior (encoder), \(p(z)\) is the prior over the latents, and \(\beta\) is a hyperparameter controlling the trade-off between the two terms.</p>
             </section>
             <section id="algorithm">
                 <h2>Conditional Generation with LDMs</h2>
                 <pre><code>
 <ol>
-<li><strong>Encoding:</strong> Encode data samples into latent space using an encoder \(E\): \( z_0 = E(x) \)</li>
+<li><strong>Encoding:</strong> Encode data samples into latent space using an encoder \(E\):
+    \[ z_0 = E(x) \]
+</li>
 <li><strong>Diffusion:</strong> Apply forward diffusion to obtain noisy latents \(z_1, z_2, \ldots, z_T\)</li>
-<li><strong>Conditioned Denoising:</strong> Train reverse process \(p_\theta\) to denoise latents back to \(z_0\) considering condition \(c\): \( z_{t-1} = p_\theta(z_{t-1}|z_t) \)</li>
-<li><strong>Decoding:</strong> Use decoder \(D\) to generate final samples from denoised latents: \( \hat{x} = D(z_0) \)</li>
+<li><strong>Conditioned Denoising:</strong> Train reverse process \(p_\theta\) to denoise latents back to \(z_0\) considering condition \(c\):
+    \[ z_{t-1} = p_\theta(z_{t-1}|z_t) \]
+</li>
+<li><strong>Decoding:</strong> Use decoder \(D\) to generate final samples from denoised latents:
+    \[ \hat{x} = D(z_0) \]
+</li>
 <li><strong>Optimization:</strong> Update parameters \(\theta\) by minimizing loss \(\mathcal{L}(\theta)\) using gradient descent</li>
 </ol>
                 </code></pre>
@@ -163,4 +224,3 @@
     </footer>
 </body>
 </html>
-
