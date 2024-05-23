@@ -195,25 +195,34 @@
                 <p>where \( Z_{\theta}(y) = \int \exp(-E_{\theta}(x, y)) dx \) is the partition function, which is generally intractable to compute exactly. In EBCDMs, the energy function is parameterized using a neural network, and the model is trained by optimizing a loss function that encourages the energy to be low for pairs of samples and conditions that are likely to occur together and high otherwise.</p>
             </section>
 
-            <section id="algorithm">
-                <h2>Conditional Generation with EBCDMs</h2>
-                <p>The following algorithm describes the conditional generation process using EBCDMs:</p>
-                <pre><code class="math">\begin{algorithm}[t]
-\caption{Conditional Generation with EBCDMs}
-\label{alg:ebcdm_generation}
-\begin{algorithmic}[1]
-\STATE \textbf{Training:} Train the energy-based model by optimizing the loss function \(\mathcal{L}(\theta)\) using gradient descent. This step requires samples from the data distribution and their corresponding conditions.
-\STATE \textbf{Sampling:} To generate samples conditioned on a specific condition \( y \), use a diffusion process that starts from noise and gradually denoises the samples guided by the gradients of the energy function:
-   \STATE Initialize \( x_T \) with random noise.
-   \FOR{each step \( t = T, T-1, \ldots, 1 \)}:
-     \STATE Update \( x_{t-1} \) using a Langevin dynamics step:
-       \( x_{t-1} = x_t - \frac{\eta_t}{2} \nabla_x E_{\theta}(x_t, y) + \sqrt{\eta_t} \epsilon_t \),
-       where \(\eta_t\) is the step size, and \(\epsilon_t \sim \mathcal{N}(0, I) \) is Gaussian noise.
-   \ENDFOR
-\STATE \textbf{Output:} The final sample \( x_0 \) is a generated sample that is conditioned on the specified condition \( y \).
-\end{algorithmic}
-\end{algorithm}</code></pre>
-            </section>
+    <section id="algorithm">
+    <h2>Conditional Generation with EBCDMs</h2>
+    <p>The following algorithm describes the conditional generation process using EBCDMs:</p>
+    <p>
+    <pre><code class="math">
+\[
+\begin{array}{l}
+\textbf{Algorithm: Conditional Generation with EBCDMs} \\
+\hline
+\textbf{Training:} \\
+1. \ \text{Train the energy-based model by optimizing the loss function } \mathcal{L}(\theta) \text{ using gradient descent.} \\
+\ \ \ \ \text{This step requires samples from the data distribution and their corresponding conditions.} \\
+\textbf{Sampling:} \\
+2. \ \text{To generate samples conditioned on a specific condition } y, \text{ use a diffusion process that starts from noise and} \\
+\ \ \ \ \text{gradually denoises the samples guided by the gradients of the energy function:} \\
+\ \ \ \ \ \ \ \ \ \text{Initialize } x_T \text{ with random noise.} \\
+3. \ \text{For each step } t = T, T-1, \ldots, 1: \\
+\ \ \ \ \ \  \text{Update } x_{t-1} \text{ using a Langevin dynamics step:} \\
+\ \ \ \ \ \  x_{t-1} = x_t - \frac{\eta_t}{2} \nabla_x E_{\theta}(x_t, y) + \sqrt{\eta_t} \epsilon_t, \\
+\ \ \ \ \ \  \text{where } \eta_t \text{ is the step size, and } \epsilon_t \sim \mathcal{N}(0, I) \text{ is Gaussian noise.} \\
+\textbf{Output:} \\
+4. \ \text{The final sample } x_0 \text{ is a generated sample that is conditioned on the specified condition } y.
+\end{array}
+\]
+    </code></pre>
+    </p>
+</section>
+
 
             <section id="loss-function">
                 <h2>Loss Function</h2>
