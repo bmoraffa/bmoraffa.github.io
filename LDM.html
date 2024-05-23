@@ -1,1 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latent Diffusion Models</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .summary {
+            font-size: 18px;
+            color: #ccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .meta-info {
+            font-size: 14px;
+            color: #bbb;
+            margin: 10px auto;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+        }
+        .section-divider {
+            width: 100%;
+            border-top: 1px solid #333;
+            margin: 10px auto;
+        }
+        h2 {
+            font-size: 28px;
+            color: #fff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-bottom: 100px;
+        }
+        .post {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .post p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .math {
+            font-style: italic;
+            font-family: serif;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: #fff;
+            text-align: right;
+            padding: 10px 20px;
+            width: calc(100% - 40px);
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #333;
+        }
+        footer .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+        footer .social-icons a {
+            color: #fff;
+            text-decoration: none;
+        }
+        footer .social-icons img {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Latent Diffusion Models</h1>
+            <div class="summary">
+                Latent Diffusion Models (LDMs) extend diffusion models to a latent space, making the generative process more efficient and better suited for high-dimensional data.
+            </div>
+            <div class="section-divider"></div>
+            <div class="meta-info">
+                <div>Author: Bahman Moraffah</div>
+                <div>Estimated Reading Time: 15 min</div>
+                <div>Published: 2021</div>
+            </div>
+        </header>
+        <!-- Article content -->
+        <div class="post">
+            <section id="introduction">
+                <h2>Introduction</h2>
+                <p>Latent Diffusion Models are generative models that extend diffusion models to a latent space. Traditional diffusion models denoise samples from a noise distribution to produce target data samples. LDMs do this in a compressed latent space, leading to computational efficiency and effective handling of high-dimensional data. For more details, see Section <span class="math">\ref{sec:ldms}</span>.</p>
+            </section>
+            <section id="overview">
+                <h2>Overview</h2>
+                <p>The core idea of LDMs is to map between data space (\(X\)) and latent space (\(Z\)) using an encoder \(E: X \rightarrow Z\) and a decoder \(D: Z \rightarrow X\).</p>
+                <p>The diffusion process in latent space involves a forward process that adds noise to a latent variable \(z_0\), producing noisy latents \(z_1, z_2, \ldots, z_T\), modeled by \(q(z_{t+1}|z_t)\). The reverse process denoises these latents back to the original signal using \(p_\theta(z_{t-1}|z_t)\), where \(\theta\) are the model parameters.</p>
+            </section>
+            <section id="training">
+                <h2>Training</h2>
+                <p>The training objective is to maximize the likelihood of the reverse process. This is typically done using a variational lower bound on the log-likelihood, leading to a loss function with a reconstruction term and a KL-divergence term:</p>
+                <p class="math"> \[ \mathcal{L}(\theta) = \mathbb{E}_{q(z|x)}[\log p_\theta(x|z)] - \beta \cdot D_{KL}(q(z|x) || p(z)), \]</p>
+                <p>where \(x\) is a data sample, \(z\) is its latent representation, \(p_\theta(x|z)\) is the likelihood of the data given the latents, \(q(z|x)\) is the approximate posterior (encoder), \(p(z)\) is the prior over the latents, and \(\beta\) controls the trade-off between terms.</p>
+            </section>
+            <section id="algorithm">
+                <h2>Conditional Generation with LDMs</h2>
+                <pre><code>
+<ol>
+<li><strong>Encoding:</strong> Encode data samples into latent space using an encoder \(E\): \( z_0 = E(x) \)</li>
+<li><strong>Diffusion:</strong> Apply forward diffusion to obtain noisy latents \(z_1, z_2, \ldots, z_T\)</li>
+<li><strong>Conditioned Denoising:</strong> Train reverse process \(p_\theta\) to denoise latents back to \(z_0\) considering condition \(c\): \( z_{t-1} = p_\theta(z_{t-1}|z_t) \)</li>
+<li><strong>Decoding:</strong> Use decoder \(D\) to generate final samples from denoised latents: \( \hat{x} = D(z_0) \)</li>
+<li><strong>Optimization:</strong> Update parameters \(\theta\) by minimizing loss \(\mathcal{L}(\theta)\) using gradient descent</li>
+</ol>
+                </code></pre>
+            </section>
+        </div>
+    </div>
+    <footer>
+        <div>&copy; BM's Blog. All Rights Reserved.</div>
+        <div class="social-icons">
+            <a href="https://www.linkedin.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn"></a>
+            <a href="https://scholar.google.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Google_Scholar_logo.png" alt="Google Scholar"></a>
+            <a href="https://github.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub"></a>
+            <a href="https://twitter.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter"></a>
+        </div>
+    </footer>
+</body>
+</html>
 
