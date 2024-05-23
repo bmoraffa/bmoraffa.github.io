@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Energy-based Conditional Diffusion Models (EBCDMs)</title>
+    <title>Energy-based Conditional Diffusion Models</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
@@ -65,7 +65,7 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 0 20px;
-            padding-bottom: 100px; /* Adjusted padding to make space for footer */
+            padding-bottom: 100px;
         }
         .post {
             padding: 20px;
@@ -195,36 +195,32 @@
                 <p>where \( Z_{\theta}(y) = \int \exp(-E_{\theta}(x, y)) dx \) is the partition function, which is generally intractable to compute exactly. In EBCDMs, the energy function is parameterized using a neural network, and the model is trained by optimizing a loss function that encourages the energy to be low for pairs of samples and conditions that are likely to occur together and high otherwise.</p>
             </section>
 
-    <section id="algorithm">
+<section id="algorithm">
     <h2>Conditional Generation with EBCDMs</h2>
     <p>The following algorithm describes the conditional generation process using EBCDMs:</p>
-    <p>
-    <pre><code class="math">
-\[
-\begin{array}{l}
-\textbf{Algorithm: Conditional Generation with EBCDMs} \\
-\hline
-\textbf{Training:} \\
-1. \ \text{Train the energy-based model by optimizing the loss function } \mathcal{L}(\theta) \text{ using gradient descent.} \\
-\ \ \ \ \text{This step requires samples from the data distribution and their corresponding conditions.} \\
-\textbf{Sampling:} \\
-2. \ \text{To generate samples conditioned on a specific condition } y, \text{ use a diffusion process that starts from noise and} \\
-\ \ \ \ \text{gradually denoises the samples guided by the gradients of the energy function:} \\
-\ \ \ \ \ \ \ \ \ \text{Initialize } x_T \text{ with random noise.} \\
-3. \ \text{For each step } t = T, T-1, \ldots, 1: \\
-\ \ \ \ \ \  \text{Update } x_{t-1} \text{ using a Langevin dynamics step:} \\
-\ \ \ \ \ \  x_{t-1} = x_t - \frac{\eta_t}{2} \nabla_x E_{\theta}(x_t, y) + \sqrt{\eta_t} \epsilon_t, \\
-\ \ \ \ \ \  \text{where } \eta_t \text{ is the step size, and } \epsilon_t \sim \mathcal{N}(0, I) \text{ is Gaussian noise.} \\
-\textbf{Output:} \\
-4. \ \text{The final sample } x_0 \text{ is a generated sample that is conditioned on the specified condition } y.
-\end{array}
-\]
-    </code></pre>
-    </p>
+    <pre>
+<code>
+Training: 
+1. Train the energy-based model by optimizing the loss function \(\mathcal{L}(\theta)\) using gradient descent.
+   This step requires samples from the data distribution and their corresponding conditions.
+
+Sampling:
+2. To generate samples conditioned on a specific condition \(y\), use a diffusion process that starts from noise and 
+   gradually denoises the samples guided by the gradients of the energy function:
+   a. Initialize \(x_T\) with random noise.
+   b. For each step \(t = T, T-1, \ldots, 1\):
+      i.   Update \(x_{t-1}\) using a Langevin dynamics step:
+           \[
+           x_{t-1} = x_t - \frac{\eta_t}{2} \nabla_x E_{\theta}(x_t, y) + \sqrt{\eta_t} \epsilon_t,
+           \]
+           where \(\eta_t\) is the step size, and \(\epsilon_t \sim \mathcal{N}(0, I)\) is Gaussian noise.
+
+Output:
+3. The final sample \(x_0\) is a generated sample that is conditioned on the specified condition \(y\).
+</code>
+    </pre>
 </section>
-
-
-            <section id="loss-function">
+    <section id="loss-function">
                 <h2>Loss Function</h2>
                 <p>The training of EBCDMs involves minimizing a loss function that is typically based on contrastive divergence or noise-contrastive estimation. One common choice is the score matching loss, which for conditional models can be formulated as:</p>
                 <p class="math">\(\mathcal{L}(\theta) = \mathbb{E}_{x, y \sim p_{\text{data}}(x, y)} \left[ \frac{1}{2} \left\| \nabla_x E_{\theta}(x, y) + \nabla_x \log p_{\text{data}}(x | y) \right\|^2 \right] \)</p>
