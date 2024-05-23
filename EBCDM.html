@@ -1,1 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy-based Conditional Diffusion Models (EBCDMs)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Energy-based Conditional Diffusion Models (EBCDMs)</h1>
+        
+        <h2>Background on Energy-based Models (EBMs)</h2>
+        <p>Energy-based Models (EBMs) are a class of probabilistic models where the probability of a configuration (e.g., a data point) is defined in terms of an energy function. The energy function assigns lower energies to more probable or desirable configurations. Mathematically, the probability distribution over data \( x \) is given by the Boltzmann distribution:</p>
+        <pre>p_{\theta}(x) = \frac{\exp(-E_{\theta}(x))}{Z_{\theta}},</pre>
+        <p>where \( E_{\theta}(x) \) is the energy function parameterized by \( \theta \), and \( Z_{\theta} = \int \exp(-E_{\theta}(x)) dx \) is the partition function ensuring normalization.</p>
+
+        <h2>Energy-based Conditional Diffusion Models (EBCDMs)</h2>
+        <p>The key idea of Energy-based Conditional Diffusion Models (EBCDMs) is to define a conditional energy function \( E_{\theta}(x, y) \) that measures the compatibility between a data sample \( x \) and a condition \( y \). The conditional probability distribution is then defined using the Boltzmann distribution:</p>
+        <pre>p_{\theta}(x | y) = \frac{\exp(-E_{\theta}(x, y))}{Z_{\theta}(y)},</pre>
+        <p>where \( Z_{\theta}(y) = \int \exp(-E_{\theta}(x, y)) dx \) is the partition function, which is generally intractable to compute exactly. In EBCDMs, the energy function is parameterized using a neural network, and the model is trained by optimizing a loss function that encourages the energy to be low for pairs of samples and conditions that are likely to occur together and high otherwise.</p>
+
+        <h2>Algorithm: Conditional Generation with EBCDMs</h2>
+        <pre><code>
+\begin{algorithm}[t]
+\caption{Conditional Generation with EBCDMs}
+\label{alg:ebcdm_generation}
+\begin{algorithmic}[1]
+\STATE \textbf{Training:} Train the energy-based model by optimizing the loss function \(\mathcal{L}(\theta)\) using gradient descent. This step requires samples from the data distribution and their corresponding conditions.
+\STATE \textbf{Sampling:} To generate samples conditioned on a specific condition \( y \), use a diffusion process that starts from noise and gradually denoises the samples guided by the gradients of the energy function:
+   \STATE Initialize \( x_T \) with random noise.
+   \FOR{each step \( t = T, T-1, \ldots, 1 \)}:
+     \STATE Update \( x_{t-1} \) using a Langevin dynamics step:
+       \( x_{t-1} = x_t - \frac{\eta_t}{2} \nabla_x E_{\theta}(x_t, y) + \sqrt{\eta_t} \epsilon_t \),
+       where \(\eta_t\) is the step size, and \(\epsilon_t \sim \mathcal{N}(0, I) \) is Gaussian noise.
+   \ENDFOR
+\STATE \textbf{Output:} The final sample \( x_0 \) is a generated sample that is conditioned on the specified condition \( y \).
+\end{algorithmic}
+\end{algorithm}
+        </code></pre>
+
+        <p>The training of EBCDMs involves minimizing a loss function that is typically based on contrastive divergence or noise-contrastive estimation. One common choice is the score matching loss, which for conditional models can be formulated as:</p>
+        <pre>\(\mathcal{L}(\theta) = \mathbb{E}_{x, y \sim p_{\text{data}}(x, y)} \left[ \frac{1}{2} \left\| \nabla_x E_{\theta}(x, y) + \nabla_x \log p_{\text{data}}(x | y) \right\|^2 \right] \)</pre>
+        <p>where \( p_{\text{data}}(x, y) \) is the joint distribution of data samples and conditions, and \( p_{\text{data}}(x | y) \) is the true conditional distribution of data given the condition. Algorithm \ref{alg:ebcdm_generation} presents the summary of this approach.</p>
+    </div>
+</body>
+</html>
 
