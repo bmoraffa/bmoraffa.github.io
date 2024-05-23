@@ -4,52 +4,201 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Energy-based Conditional Diffusion Models (EBCDMs)</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            text-align: center;
+            width: 100%;
             padding: 20px;
-            background-color: #f4f4f4;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .summary {
+            font-size: 18px;
+            color: #ccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .meta-info {
+            font-size: 14px;
+            color: #bbb;
+            margin: 10px auto;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+        }
+        .section-divider {
+            width: 100%;
+            border-top: 1px solid #333;
+            margin: 10px auto;
+        }
+        h2 {
+            font-size: 28px;
+            color: #fff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #bbb;
         }
         .container {
             max-width: 800px;
-            margin: auto;
-            background: #fff;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-bottom: 100px; /* Adjusted padding to make space for footer */
+        }
+        .post {
             padding: 20px;
+            margin-bottom: 20px;
+        }
+        .post p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .math {
+            font-style: italic;
+            font-family: serif;
+        }
+        .reference {
+            margin-top: 20px;
+        }
+        .reference h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .reference p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: #fff;
+            text-align: right;
+            padding: 10px 20px;
+            width: calc(100% - 40px);
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #333;
+        }
+        footer .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+        footer .social-icons a {
+            color: #fff;
+            text-decoration: none;
+        }
+        footer .social-icons img {
+            width: 24px;
+            height: 24px;
+        }
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            background-color: #1f1f1f;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        pre {
-            background: #f4f4f4;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
+            box-sizing: border-box;
+            border: 2px solid #333;
+        }
+        nav h2 {
+            font-size: 20px;
+            margin-top: 0;
+            color: #fff;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            margin-bottom: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        nav ul li a.active,
+        nav ul li a:hover {
+            font-weight: bold;
+            color: #1e90ff;
         }
     </style>
 </head>
 <body>
+    <nav id="toc">
+        <h2>Contents</h2>
+        <ul>
+            <li><a href="#background">Background on Energy-based Models</a></li>
+            <li><a href="#ebcdm">Energy-based Conditional Diffusion Models (EBCDMs)</a></li>
+            <li><a href="#algorithm">Conditional Generation with EBCDMs</a></li>
+            <li><a href="#loss-function">Loss Function</a></li>
+        </ul>
+    </nav>
     <div class="container">
-        <h1>Energy-based Conditional Diffusion Models (EBCDMs)</h1>
-        
-        <h2>Background on Energy-based Models (EBMs)</h2>
-        <p>Energy-based Models (EBMs) are a class of probabilistic models where the probability of a configuration (e.g., a data point) is defined in terms of an energy function. The energy function assigns lower energies to more probable or desirable configurations. Mathematically, the probability distribution over data \( x \) is given by the Boltzmann distribution:</p>
-        <pre>p_{\theta}(x) = \frac{\exp(-E_{\theta}(x))}{Z_{\theta}},</pre>
-        <p>where \( E_{\theta}(x) \) is the energy function parameterized by \( \theta \), and \( Z_{\theta} = \int \exp(-E_{\theta}(x)) dx \) is the partition function ensuring normalization.</p>
+        <header>
+            <h1>Energy-based Conditional Diffusion Models (EBCDMs)</h1>
+            <div class="summary">
+                An in-depth exploration of Energy-based Conditional Diffusion Models (EBCDMs), which leverage conditional energy functions to generate samples conditioned on specific inputs through a diffusion process.
+            </div>
+            <div class="section-divider"></div>
+            <div class="meta-info">
+                <div>Author: Bahman Moraffah</div>
+                <div>Estimated Reading Time: 10 min</div>
+                <div>Published: 2021</div>
+            </div>
+        </header>
+        <!-- Article content -->
+        <div class="post">
+            <section id="background">
+                <h2>Background on Energy-based Models (EBMs)</h2>
+                <p>Energy-based Models (EBMs) are a class of probabilistic models where the probability of a configuration (e.g., a data point) is defined in terms of an energy function. The energy function assigns lower energies to more probable or desirable configurations. Mathematically, the probability distribution over data \( x \) is given by the Boltzmann distribution:</p>
+                <p class="math">\(p_{\theta}(x) = \frac{\exp(-E_{\theta}(x))}{Z_{\theta}},\)</p>
+                <p>where \( E_{\theta}(x) \) is the energy function parameterized by \( \theta \), and \( Z_{\theta} = \int \exp(-E_{\theta}(x)) dx \) is the partition function ensuring normalization.</p>
+            </section>
+            
+            <section id="ebcdm">
+                <h2>Energy-based Conditional Diffusion Models (EBCDMs)</h2>
+                <p>The key idea of Energy-based Conditional Diffusion Models (EBCDMs) is to define a conditional energy function \( E_{\theta}(x, y) \) that measures the compatibility between a data sample \( x \) and a condition \( y \). The conditional probability distribution is then defined using the Boltzmann distribution:</p>
+                <p class="math">\(p_{\theta}(x | y) = \frac{\exp(-E_{\theta}(x, y))}{Z_{\theta}(y)},\)</p>
+                <p>where \( Z_{\theta}(y) = \int \exp(-E_{\theta}(x, y)) dx \) is the partition function, which is generally intractable to compute exactly. In EBCDMs, the energy function is parameterized using a neural network, and the model is trained by optimizing a loss function that encourages the energy to be low for pairs of samples and conditions that are likely to occur together and high otherwise.</p>
+            </section>
 
-        <h2>Energy-based Conditional Diffusion Models (EBCDMs)</h2>
-        <p>The key idea of Energy-based Conditional Diffusion Models (EBCDMs) is to define a conditional energy function \( E_{\theta}(x, y) \) that measures the compatibility between a data sample \( x \) and a condition \( y \). The conditional probability distribution is then defined using the Boltzmann distribution:</p>
-        <pre>p_{\theta}(x | y) = \frac{\exp(-E_{\theta}(x, y))}{Z_{\theta}(y)},</pre>
-        <p>where \( Z_{\theta}(y) = \int \exp(-E_{\theta}(x, y)) dx \) is the partition function, which is generally intractable to compute exactly. In EBCDMs, the energy function is parameterized using a neural network, and the model is trained by optimizing a loss function that encourages the energy to be low for pairs of samples and conditions that are likely to occur together and high otherwise.</p>
-
-        <h2>Algorithm: Conditional Generation with EBCDMs</h2>
-        <pre><code>
-\begin{algorithm}[t]
+            <section id="algorithm">
+                <h2>Conditional Generation with EBCDMs</h2>
+                <pre><code>\begin{algorithm}[t]
 \caption{Conditional Generation with EBCDMs}
-\label{alg:ebcdm_generation}
 \begin{algorithmic}[1]
 \STATE \textbf{Training:} Train the energy-based model by optimizing the loss function \(\mathcal{L}(\theta)\) using gradient descent. This step requires samples from the data distribution and their corresponding conditions.
 \STATE \textbf{Sampling:} To generate samples conditioned on a specific condition \( y \), use a diffusion process that starts from noise and gradually denoises the samples guided by the gradients of the energy function:
@@ -61,13 +210,27 @@
    \ENDFOR
 \STATE \textbf{Output:} The final sample \( x_0 \) is a generated sample that is conditioned on the specified condition \( y \).
 \end{algorithmic}
-\end{algorithm}
-        </code></pre>
-
-        <p>The training of EBCDMs involves minimizing a loss function that is typically based on contrastive divergence or noise-contrastive estimation. One common choice is the score matching loss, which for conditional models can be formulated as:</p>
-        <pre>\(\mathcal{L}(\theta) = \mathbb{E}_{x, y \sim p_{\text{data}}(x, y)} \left[ \frac{1}{2} \left\| \nabla_x E_{\theta}(x, y) + \nabla_x \log p_{\text{data}}(x | y) \right\|^2 \right] \)</pre>
-        <p>where \( p_{\text{data}}(x, y) \) is the joint distribution of data samples and conditions, and \( p_{\text{data}}(x | y) \) is the true conditional distribution of data given the condition. Algorithm \ref{alg:ebcdm_generation} presents the summary of this approach.</p>
+\end{algorithm}</code></pre>
+                <p>The training of EBCDMs involves minimizing a loss function that is typically based on contrastive divergence or noise-contrastive estimation. One common choice is the score matching loss, which for conditional models can be formulated as:</p>
+                <p class="math">\(\mathcal{L}(\theta) = \mathbb{E}_{x, y \sim p_{\text{data}}(x, y)} \left[ \frac{1}{2} \left\| \nabla_x E_{\theta}(x, y) + \nabla_x \log p_{\text{data}}(x | y) \right\|^2 \right] \)</p>
+                <p>where \( p_{\text{data}}(x, y) \) is the joint distribution of data samples and conditions, and \( p_{\text{data}}(x | y) \) is the true conditional distribution of data given the condition. Algorithm \ref{alg:ebcdm_generation} presents the summary of this approach.</p>
+            </section>
+        </div>
+        <!-- Reference section -->
+        <section id="references" class="reference">
+            <h2>References</h2>
+            <p>[1] LeCun, Y., Chopra, S., Hadsell, R., Ranzato, M., & Huang, F. (2006). <a href="https://ieeexplore.ieee.org/document/1640964" target="_blank">A Tutorial on Energy-Based Learning</a>.</p>
+            <p>[2] Du, Y., & Mordatch, I. (2019). <a href="https://arxiv.org/abs/1906.01710" target="_blank">Implicit Generation and Modeling with Energy Based Models</a>.</p>
+        </section>
     </div>
+    <footer>
+        <div>&copy; BM's Blog. All Rights Reserved.</div>
+        <div class="social-icons">
+            <a href="https://www.linkedin.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn"></a>
+            <a href="https://scholar.google.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Google_Scholar_logo.png" alt="Google Scholar"></a>
+            <a href="https://github.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub"></a>
+            <a href="https://twitter.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter"></a>
+        </div>
+    </footer>
 </body>
 </html>
-
