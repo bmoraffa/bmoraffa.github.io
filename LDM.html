@@ -201,7 +201,7 @@
     \[ z_0 = E(x) \]
 </li>
 <li><strong>Diffusion:</strong> Apply forward diffusion to obtain noisy latents \(z_1, z_2, \ldots, z_T\)</li>
-<li><strong>Conditioned Denoising:</strong> Train reverse process \(p_\theta\) to denoise latents back to \(z_0\) considering condition \(c\):
+<li><strong>Conditioned Denoising:</strong> Train reverse process \(p_\theta\) to denoise latents back to \(z_0\):
     \[ z_{t-1} = p_\theta(z_{t-1}|z_t) \]
 </li>
 <li><strong>Decoding:</strong> Use decoder \(D\) to generate final samples from denoised latents:
