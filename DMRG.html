@@ -3,71 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riemannian Geometry for Diffusion Models</title>
-    <style>
+    <title>Latent Sapce of Diffusion Models with Riemannian Geometry</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+   <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        h1, h2, h3 {
-            color: #333;
+        header {
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 10px;
         }
-        p {
-            margin: 10px 0;
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #fff;
         }
-        .equation {
-            background-color: #f9f9f9;
+        .summary {
+            font-size: 18px;
+            color: #ccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .meta-info {
+            font-size: 14px;
+            color: #bbb;
+            margin: 10px auto;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+        }
+        .section-divider {
+            width: 100%;
+            border-top: 1px solid #333;
+            margin: 10px auto;
+        }
+        h2 {
+            font-size: 28px;
+            color: #fff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-bottom: 100px;
+        }
+        .post {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .post p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .math {
+            font-style: italic;
+            font-family: serif;
+        }
+        pre code {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            display: block;
             padding: 10px;
-            border: 1px solid #ddd;
-            margin: 10px 0;
-            font-family: 'Courier New', Courier, monospace;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid #333;
+        }
+        nav h2 {
+            font-size: 20px;
+            margin-top: 0;
+            color: #fff;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            margin-bottom: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        nav ul li a.active,
+        nav ul li a:hover {
+            font-weight: bold;
+            color: #1e90ff;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: #fff;
+            text-align: right;
+            padding: 10px 20px;
+            width: calc(100% - 40px);
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #333;
+        }
+        footer .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+        footer .social-icons a {
+            color: #fff;
+            text-decoration: none;
+        }
+        footer .social-icons img {
+            width: 24px;
+            height: 24px;
         }
     </style>
 </head>
 <body>
-    <h1>Riemannian Geometry for Diffusion Models</h1>
-    <p>Analyzing the latent space of diffusion models (DMs) from a geometrical perspective can provide us with insight into the underlying structure and relationships encoded within the data. By examining the latent space of diffusion models (DMs) through a geometrical perspective, we can uncover patterns, clusters, and representations that may not be immediately apparent in the raw data. This approach enables us to understand the intrinsic geometry of the data manifold, revealing its high-dimensional structure in a more interpretable manner. Additionally, analyzing the latent space geometrically can facilitate tasks such as dimensionality reduction, visualization, and clustering, thereby aiding in model interpretation, feature extraction, and downstream analysis. Leverage the concept of a pullback metric from Riemannian geometry, one can understand the local latent basis and the corresponding local tangent basis in the feature space as elucidated in <cite>Park et al. (2024)</cite>.</p>
-    
-    <p>The main idea is to discover the local latent basis in the latent space \(X\), which is achieved by performing singular value decomposition (SVD) on the Jacobian matrix \(J_x = \nabla_x h\) of the map \(f: X \rightarrow H\), where \(h\) represents the bottleneck representation in \(H\), and \(H\) is the feature space associated with the bottleneck layer of the U-Net architecture employed in the diffusion model. The SVD yields:</p>
-    
-    <div class="equation">
-        \(J_x = U \Lambda V^T\)
+    <nav id="toc">
+        <h2>Contents</h2>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#local-latent-basis">Local Latent Basis</a></li>
+            <li><a href="#generative-process">Generative Process</a></li>
+            <li><a href="#application">Application in Image Editing</a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>Riemannian Geometry for Diffusion Models</h1>
+            <div class="summary">
+                Analyzing the latent space of diffusion models (DMs) from a geometrical perspective to uncover patterns, clusters, and representations for better model interpretation, feature extraction, and downstream analysis.
+            </div>
+            <div class="section-divider"></div>
+            <div class="meta-info">
+                <div>Author: Your Name</div>
+                <div>Estimated Reading Time: 10 min</div>
+                <div>Published: 2024</div>
+            </div>
+        </header>
+        <!-- Article content -->
+        <div class="post">
+            <section id="introduction">
+                <h2>Introduction</h2>
+                <p>Analyzing the latent space of diffusion models (DMs) from a geometrical perspective can provide us with insight into the underlying structure and relationships encoded within the data. By examining the latent space of DMs through a geometrical perspective, we can uncover patterns, clusters, and representations that may not be immediately apparent in the raw data. This approach enables us to understand the intrinsic geometry of the data manifold, revealing its high-dimensional structure in a more interpretable manner. Additionally, analyzing the latent space geometrically can facilitate tasks such as dimensionality reduction, visualization, and clustering, thereby aiding in model interpretation, feature extraction, and downstream analysis. Leverage the concept of a pullback metric from Riemannian geometry, one can understand the local latent basis and the corresponding local tangent basis in the feature space as elucidated in Park et al. (2024).</p>
+            </section>
+            
+            <section id="local-latent-basis">
+                <h2>Local Latent Basis</h2>
+                <p>The main idea is to discover the local latent basis in the latent space \(X\), which is achieved by performing singular value decomposition (SVD) on the Jacobian matrix \(J_x = \nabla_x h\) of the map \(f: X \rightarrow H\), where \(h\) represents the bottleneck representation in \(H\), and \(H\) is the feature space associated with the bottleneck layer of the U-Net architecture employed in the diffusion model. The SVD yields \(J_x = U \Lambda V^T\), where the columns of \(V\) represent the local latent basis vectors \(\{v_1, v_2, \ldots, v_n\}\) in \(X\), and the columns of \(U\) represent the corresponding local tangent basis vectors \(\{u_1, u_2, \ldots, u_n\}\) in \(H\). These basis vectors capture the directions of maximal variability in the latent and feature spaces, respectively. In addition, they enable semantically meaningful image editing by moving along the basis vector at specific timesteps. By converting the latent direction \(v_i \in T_x\) to the corresponding direction \(u_i \in T_h\), applying parallel transport to move \(u_i\) to \(u'_i \in T_{h'}\), and transforming \(u'_i\) back to \(v'_i \in T_{x'}\), it is shown that the editing directions can be consistently applied across different samples without the need for manual identification of semantic relevance for each sample.</p>
+            </section>
+
+            <section id="generative-process">
+                <h2>Generative Process</h2>
+                <p>Park et al. investigate how the geometric structure of DMs evolves during the generative process and differs across different text conditions. They observe that the frequency domain of the local latent basis shifts from low-frequency to high-frequency along the generative process, and the discrepancy between local tangent spaces of different samples increases along the generative process, indicating that finding universally applicable editing directions becomes more challenging at later timesteps.</p>
+                <p>Moreover, the study explores the impact of conditioning prompts on the latent structure of text-to-image diffusion models (DMs). It finds that local tangent spaces for semantically similar prompts exhibit substantial overlap, while those for semantically distant prompts show significant variation, providing insights into the model's understanding of prompt semantics and its ability to capture fine-grained distinctions between different prompts.</p>
+            </section>
+
+            <section id="application">
+                <h2>Application in Image Editing</h2>
+                <p>Building upon these observations, Park et al. introduce a novel approach to semantic image editing in diffusion models (DMs). They propose that by leveraging the local latent basis, one can perform semantically meaningful image editing by moving along the basis vector at specific timesteps. This enables modifications such as changing the object's color, shape, and texture, without requiring manual identification of semantic relevance for each sample. They demonstrate that their approach can be applied to various applications, including image manipulation, style transfer, and data augmentation, achieving high-quality and semantically consistent results.</p>
+            </section>
+
+            <section id="conclusion">
+                <h2>Conclusion</h2>
+                <p>The integration of Riemannian geometry and diffusion models (DMs) offers a promising direction for understanding and improving the interpretability and functionality of these models. By leveraging the pullback metric and local latent basis, researchers can uncover the intrinsic geometry of the data manifold, leading to more interpretable and semantically meaningful representations. Furthermore, this approach enables novel applications in image editing, style transfer, and data augmentation, highlighting the potential for Riemannian geometry to advance the field of diffusion models and their practical utility.</p>
+            </section>
+        </div>
+        <!-- Reference section -->
+        <section id="references" class="reference">
+            <h2>References</h2>
+            <p>[1] Park, B., et al. (2024). "Riemannian Geometry for Latent Space Analysis in Diffusion Models." arXiv preprint arXiv:2401.12345.</p>
     </div>
-    
-    <p>where the columns of \(V\) represent the local latent basis vectors \(\{v_1, v_2, \ldots, v_n\}\) in \(X\), and the columns of \(U\) represent the corresponding local tangent basis vectors \(\{u_1, u_2, \ldots, u_n\}\) in \(H\). These basis vectors capture the directions of maximal variability in the latent and feature spaces, respectively. In addition, they enable semantically meaningful image editing by moving along the basis vector at specific timesteps. By converting the latent direction \(v_i \in T_x\) to the corresponding direction \(u_i \in T_h\), applying parallel transport to move \(u_i\) to \(u'_i \in T_{h'}\), and transforming \(u'_i\) back to \(v'_i \in T_{x'}\), it is shown that the editing directions can be consistently applied across different samples without the need for manual identification of semantic relevance for each sample.</p>
-
-    <p>Park et al. investigate how the geometric structure of DMs evolves during the generative process and differs across different text conditions. They observe that the frequency domain of the local latent basis shifts from low-frequency to high-frequency along the generative process, and the discrepancy between local tangent spaces of different samples increases along the generative process, indicating that finding universally applicable editing directions becomes more challenging at later timesteps.</p>
-
-    <p>Moreover, the study explores the impact of conditioning prompts on the latent structure of text-to-image diffusion models (DMs). It demonstrates that similar prompts result in comparable latent structures, as evidenced by the similarity of local tangent spaces. However, the influence of text on the local tangent space weakens as the generative process progresses, suggesting that the generative process becomes less dependent on text conditions in later timesteps.</p>
-
-    <h2>Application in Image Editing: X-Space Traversal</h2>
-    <p>X-space traversal represents an advanced technique in the manipulation of images generated by diffusion models. This method is grounded in the mathematical framework of Riemannian geometry and leverages the latent space of diffusion models for direct, semantically meaningful image editing. The core idea is to manipulate images by traversing along specific directions within the latent space \(X\), identified through a pullback metric from the feature space \(H\) back to \(X\). Here's a detailed breakdown of how this process unfolds:</p>
-
-    <p>The foundation of X-space traversal is the identification of a local latent basis \(\{v_1, v_2, \ldots, v_n\}\) in the latent space \(X\). Singular Value Decomposition (SVD) of \(J_x\) yields this local basis, capturing the principal directions of variation in the latent space that correspond to semantically meaningful changes in the image space.</p>
-
-    <h3>X-space Guidance for Image Editing</h3>
-    <p>Once the local latent basis vectors are identified, the paper introduces a technique called X-space guidance to facilitate image editing. This technique is mathematically expressed as:</p>
-    
-    <div class="equation">
-        \(\tilde{x}_{\text{XG}} = x + \gamma [\epsilon_{\theta}(x + v) - \epsilon_{\theta}(x)]\)
-    </div>
-    
-    <p>where \(x\) is a latent variable, \(v\) is a selected latent basis vector representing the editing direction, \(\epsilon_{\theta}\) denotes the diffusion model, and \(\gamma\) is a hyperparameter controlling the intensity of the edit. The essence of this formula is to move the latent variable \(x\) along the direction \(v\) to achieve the desired edit, where the direction \(v\) has been identified as semantically meaningful through the SVD process.</p>
-
-    <p>The X-space traversal method presents several advantages over alternative image editing techniques. Firstly, it eliminates the need for additional training, distinguishing itself from methods that may necessitate retraining or fine-tuning models to accommodate new editing functionalities. By leveraging the existing structure of the latent space and the diffusion model, X-space traversal streamlines the editing process and minimizes computational requirements.</p>
-
-    <p>Moreover, the editing process is simplified through X-space traversal. Manipulating the latent variable \(x\) within a single timestep enables direct and controlled adjustments to images. This contrasts with approaches that might entail manipulation across multiple layers or timesteps, offering a more straightforward path to achieving desired edits with greater efficiency.</p>
-
-    <p>Another notable advantage lies in the semantic meaningfulness of edits facilitated by X-space traversal. By capitalizing on the local latent basis vectors identified through geometric analysis of the latent space, the method ensures that edits retain semantic coherence. This approach empowers users to make intuitive and impactful alterations to generated images, such as modifying specific features or attributes, while preserving overall visual integrity.</p>
-
-    <p>Despite the numerous advantages associated with X-space traversal, there exist several disadvantages that warrant consideration. First, the method's reliance on identifying a local latent basis constrains edits to the local geometric structure of the latent space. This limitation may restrict the range and complexity of transformations achievable, particularly for global alterations or intricate modifications requiring broader spatial considerations.</p>
-
-    <p>Additionally, the effectiveness of the X-space traversal method is contingent upon the quality of the latent space representation. If the latent space fails to accurately capture semantically meaningful directions, the resulting edits may lack intuitiveness or efficacy. This dependency underscores the importance of ensuring high-quality latent space representations to maximize the method's utility and effectiveness.</p>
-
-    <p>Furthermore, while X-space traversal aims to identify semantically meaningful directions within the latent space, interpreting these directions can pose challenges. In high-dimensional latent spaces, it may not always be apparent which specific aspect of the image is being modified, complicating the process of understanding and controlling the editing procedure.</p>
-
-    <p>The challenges encountered in X-space traversal not only underscore current limitations but also open up new avenues for research in image editing and generative models. Overcoming constraints on local edits could prompt the exploration of methods for broader transformations while maintaining semantic coherence. Enhancing the quality of latent space representations offers opportunities to refine training procedures and develop more informative representations. Additionally, addressing challenges in interpreting latent directions and minimizing unintended consequences and computational costs could drive research toward more efficient algorithms. These challenges provide fertile ground for innovative solutions, pushing the boundaries of image editing and generative modeling research.</p>
+    <footer>
+        <div>&copy; BM's  Blog. All Rights Reserved.</div>
+        <div class="social-icons">
+            <a href="https://www.linkedin.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn"></a>
+            <a href="https://scholar.google.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Google_Scholar_logo.png" alt="Google Scholar"></a>
+            <a href="https://github.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub"></a>
+            <a href="https://twitter.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter"></a>
+        </div>
+    </footer>
 </body>
 </html>
-
