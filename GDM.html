@@ -1,1 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamma Denoising Diffusion Models</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .summary {
+            font-size: 18px;
+            color: #ccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .meta-info {
+            font-size: 14px;
+            color: #bbb;
+            margin: 10px auto;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+        }
+        .section-divider {
+            width: 100%;
+            border-top: 1px solid #333;
+            margin: 10px auto;
+        }
+        h2 {
+            font-size: 28px;
+            color: #fff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-bottom: 100px;
+        }
+        .post {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .post p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .math {
+            font-style: italic;
+            font-family: serif;
+        }
+        .reference {
+            margin-top: 20px;
+        }
+        .reference h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .reference p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: #fff;
+            text-align: right;
+            padding: 10px 20px;
+            width: calc(100% - 40px);
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #333;
+        }
+        footer .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+        footer .social-icons a {
+            color: #fff;
+            text-decoration: none;
+        }
+        footer .social-icons img {
+            width: 24px;
+            height: 24px;
+        }
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid #333;
+        }
+        nav h2 {
+            font-size: 20px;
+            margin-top: 0;
+            color: #fff;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            margin-bottom: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        nav ul li a.active,
+        nav ul li a:hover {
+            font-weight: bold;
+            color: #1e90ff;
+        }
+    </style>
+</head>
+<body>
+    <nav id="toc">
+        <h2>Contents</h2>
+        <ul>
+            <li><a href="#gamma-denoising-diffusion-models">Gamma Denoising Diffusion Models</a></li>
+            <li><a href="#forward-process">Forward Process</a></li>
+            <li><a href="#training-objective">Training Objective</a></li>
+            <li><a href="#inference">Inference</a></li>
+            <li><a href="#applications">Applications</a></li>
+           <li><a href="#references"> Gamma Distribution Properties</a></li>
+            <li><a href="#references">References</a></li>    
+        </ul>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>Gamma Denoising Diffusion Models</h1>
+            <div class="summary">
+                The Gamma diffusion model introduces the use of the Gamma distribution for the noise component in the diffusion process rather than just Gaussian noise. This adaptation allows the model to handle data distributions with attributes such as skewness and heavy tails more effectively.
+            </div>
+            <div class="section-divider"></div>
+            <div class="meta-info">
+                <div>Author: Bahman Moraffah </div>
+                <div>Estimated Reading Time: 10 min</div>
+                <div>Published: 2021</div>
+            </div>
+        </header>
+        <div class="post">
+            <section id="gamma-denoising-diffusion-models">
+                <h2>Gamma Denoising Diffusion Models</h2>
+                <p>
+                    The Gamma diffusion model introduces the use of the Gamma distribution for the noise component in the diffusion process rather than just Gaussian noise. This adaptation allows the model to handle data distributions with attributes such as skewness and heavy tails more effectively. In this model, noise added during the forward process follows a Gamma distribution with parameters tuned to match the evolving statistics of the data at each step. During the reverse process, the model estimates and subtracts this Gamma noise to reconstruct the original data from its noisy state. It is shown that adding Gamma noise enhances the model performance, especially in terms of speed and quality of the generation process for both images and speech. These distributions allow for a better fit during the modeling of the underlying data distributions, which can lead to faster convergence and higher quality outputs <cite>nachmani2021non</cite>.
+                </p>
+            </section>
+            <section id="forward-process">
+                <h2>Forward Process</h2>
+                <p>
+                    For the Gamma distribution, the forward process adds Gamma noise instead of Gaussian noise. The forward process is 
+                </p>
+                <p class="math">
+                    \( x_t = \sqrt{1-\beta_t} x_{t-1} + \big(g_t - \mathbb{E}(g_t)\big), \)
+                </p>
+                <p>
+                    where \( g_t \sim \Gamma(k_t, \theta_t) \) and \( k_t = \frac{\beta_t}{\alpha_t\theta_0^2} \) and \( \theta_t = \sqrt{\bar{\alpha}_t}\theta_0 \) (\( \theta_0 \) is a hyperparameter) are the shape and scale parameters of the Gamma distribution, respectively<sup>1</sup>. It is worth noting that \( \text{Var}(g_t - \mathbb{E}(g_t)) = \beta_t \), which is similar to the Gaussian noise. Due to the properties of Gamma distribution<sup>2</sup>, the closed-form update for the forward process becomes
+                </p>
+                <p class="math">
+                    \( x_t = \sqrt{\bar{\alpha}_t} x_0 + \big(\bar{g}_t - \mathbb{E}(\bar{g}_t )\big), \)
+                </p>
+                <p>
+                    where \( \bar{g}_t \sim \Gamma(\bar{k}_t, \theta_t) \), \( \mathbb{E}(\bar{g}_t )= \bar{k}_t \theta_t \), and \( \bar{k}_t = \sum_{i=1}^t k_i \).
+                </p>
+            </section>
+            <section id="training-objective">
+                <h2>Training Objective</h2>
+                <p>
+                    The training objective for a diffusion model using Gamma noise is similar to the Gaussian noise diffusion model where it minimizes the error between the predicted and actual noise values added at each diffusion step. The loss function often used is the \( L_1 \) norm of the difference between the noise estimated by the model \( \epsilon_\theta(x_t, t) \) and the actual noise scaled by the standard deviation of the noise \( \sqrt{1 - \bar{\alpha}_t} \),
+                </p>
+                <p class="math">
+                    \( L(\theta) = \left\|\frac{\bar{g}_t - \mathbb{E}(\bar{g}_t )}{\sqrt{1 - \bar{\alpha}_t}} - \epsilon_\theta(x_t, t)\right\|_1. \)
+                </p>
+            </section>
+            <section id="inference">
+                <h2>Inference</h2>
+                <p>
+                    During inference, the model utilizes the trained parameters to reverse the diffusion process and reconstruct the original data from noisy observations. The update equation for the inference step utilizes the Langevin dynamics
+                </p>
+                <p class="math">
+                    \( x_{t-1} = \frac{1}{\sqrt{\bar{\alpha}_t}} \left(x_t - \frac{1 - \alpha_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon_\theta(x_t, t)\right) + \sigma_t \left(\frac{\bar{g}_t - \mathbb{E}(\bar{g}_t )}{\text{Var}(\bar{g}_t )}\right). \)
+                </p>
+                <p>
+                    This process iteratively estimates the denoised data from \( x_T \sim \Gamma(\bar{k}_T, \theta_T) \) until reaching the initial data state \( x_0 \). Similar to DDPMs, we can set \( \sigma_t^2 = \beta_t \).
+                </p>
+            </section>
+            <section id="applications">
+                <h2>Applications</h2>
+                <p>
+                    The use of the Gamma distribution in diffusion models has shown notable improvements in generative tasks for both images and speech compared to traditional Gaussian noise models. In image generation, specifically on the CelebA dataset, models incorporating Gamma noise achieved superior FID scores, indicating that the generated images were statistically closer to real images and thus of higher quality. In speech generation, the Gamma noise models outperformed Gaussian models in metrics such as Perceptual Evaluation of Speech Quality (PESQ) and short-time objective intelligibility (STOI), although they slightly underperformed in Mel-Cepstral Distortion (MCD), likely due to Gamma's distinct noise characteristics affecting spectral sharpness. Furthermore, statistical analysis revealed that Gamma noise provides a better fit than Gaussian in modeling the distribution of differences between original and noise-added data over multiple diffusion steps <cite>nachmani2021non</cite>.
+                </p>
+            </section>
+          </div>
+        <section id="Gamma Distribution Properties" >
+            <h2>References</h2>
+            <p>Assume \( g \sim \Gamma(k, \theta) \) where \( k \) and \( \theta \) are the shape and scale parameters, respectively. The mean of gamma distribution is \( \mu = k\theta \) and the variance is \( \text{Var} = k\theta^2 \). The reparameterization trick states that \( g = \theta z \), where \( z \sim \Gamma(k,1) \).</p>
+            <p>Assume \( z_1 \sim \Gamma(k_1, \theta) \) and \( z_2 \sim \Gamma(k_2, \theta) \), then \( z_1 + z_2 \sim \Gamma(k_1 + k_2, \theta) \).</p>
+        </section>
+    </div>
+        </div>
+        <section id="references" class="reference">
+            <h2>References</h2>
+            <p>[1]Eliya Nachmani, Robin San Roman, and Lior Wolf. Non gaussian denoising diffusion models. arXiv
+preprint arXiv:2106.07582, 2021.</p>
+        </section>
+    </div>
+    <footer>
+        <div>&copy;BM's Blog. All Rights Reserved.</div>
+        <div class="social-icons">
+            <a href="https://www.linkedin.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn"></a>
+            <a href="https://scholar.google.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Google_Scholar_logo.png" alt="Google Scholar"></a>
+            <a href="https://github.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub"></a>
+            <a href="https://twitter.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg" alt="Twitter"></a>
+        </div>
+    </footer>
+</body>
+</html>
 
