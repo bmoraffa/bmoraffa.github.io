@@ -234,13 +234,11 @@
                     The use of the Gamma distribution in diffusion models has shown notable improvements in generative tasks for both images and speech compared to traditional Gaussian noise models. In image generation, specifically on the CelebA dataset, models incorporating Gamma noise achieved superior FID scores, indicating that the generated images were statistically closer to real images and thus of higher quality. In speech generation, the Gamma noise models outperformed Gaussian models in metrics such as Perceptual Evaluation of Speech Quality (PESQ) and short-time objective intelligibility (STOI), although they slightly underperformed in Mel-Cepstral Distortion (MCD), likely due to Gamma's distinct noise characteristics affecting spectral sharpness. Furthermore, statistical analysis revealed that Gamma noise provides a better fit than Gaussian in modeling the distribution of differences between original and noise-added data over multiple diffusion steps, [1].
                 </p>
             </section>
-          </div>
         <section id="Gamma Distribution Properties" >
             <h2>Gamma Distribution Properties</h2>
             <p>[Property 1] Assume \( g \sim \Gamma(k, \theta) \) where \( k \) and \( \theta \) are the shape and scale parameters, respectively. The mean of gamma distribution is \( \mu = k\theta \) and the variance is \( \text{Var} = k\theta^2 \). The reparameterization trick states that \( g = \theta z \), where \( z \sim \Gamma(k,1) \).</p>
             <p>[Property 2] Assume \( z_1 \sim \Gamma(k_1, \theta) \) and \( z_2 \sim \Gamma(k_2, \theta) \), then \( z_1 + z_2 \sim \Gamma(k_1 + k_2, \theta) \).</p>
         </section>
-    </div>
         <section id="references" class="reference">
             <h2>References</h2>
             <p>[1] Eliya Nachmani, Robin San Roman, and Lior Wolf. Non gaussian denoising diffusion models. arXiv
