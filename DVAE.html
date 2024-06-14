@@ -65,13 +65,13 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 0 20px;
-            padding-bottom: 100px; /* Adjusted padding to make space for footer */
+            padding-bottom: 100px;
         }
         .post {
             padding: 20px;
             margin-bottom: 20px;
         }
-        .post p {
+        .post p, .post ul {
             font-size: 16px;
             line-height: 1.8;
             margin-bottom: 15px;
@@ -117,79 +117,68 @@
             width: 24px;
             height: 24px;
         }
-        nav {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 200px;
-            background-color: #1f1f1f;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            box-sizing: border-box;
-            border: 2px solid #333;
-        }
-        nav h2 {
-            font-size: 20px;
-            margin-top: 0;
-            color: #fff;
-            border-bottom: 2px solid #333;
-            padding-bottom: 5px;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-        }
-        nav ul li {
-            margin-bottom: 10px;
-        }
-        nav ul li a {
-            text-decoration: none;
-            color: #e0e0e0;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
-        nav ul li a.active,
-        nav ul li a:hover {
-            font-weight: bold;
-            color: #1e90ff;
-        }
     </style>
 </head>
 <body>
-    <nav id="toc">
-        <h2>Contents</h2>
-        <ul>
-            <li><a href="#introduction">Introduction</a></li>
-            <li><a href="#manifold-mismatch">Manifold Mismatch</a></li>
-            <li><a href="#sampling-interpolation">Sampling and Interpolation</a></li>
-            <li><a href="#delta-vae">ΔVAE Details</a></li>
-            <li><a href="#riemannian-manifolds">Riemannian Manifolds</a></li>
-            <li><a href="#conclusion">Conclusion</a></li>
-            <li><a href="#references">References</a></li>
-        </ul>
-    </nav>
     <div class="container">
         <header>
             <h1>Diffusion Variational Models on Manifolds</h1>
             <div class="summary">
-                Exploring the challenges and advancements in generative modeling over non-Euclidean manifolds using Diffusion Variational Autoencoders.
+                Exploring the application of diffusion variational autoencoders (ΔVAEs) in generative modeling on non-Euclidean manifolds.
             </div>
             <div class="section-divider"></div>
             <div class="meta-info">
-                <div>Author: John Doe</div>
-                <div>Estimated Reading Time: 20 min</div>
-                <div>Published: 2024</div>
+                <div>Author: Bahman Moraffah</div>
+                <div>Estimated Reading Time: 30 min</div>
+                <div>Published: 2021</div>
             </div>
         </header>
-        <!-- Article content -->
         <div class="post">
-            <section id="introduction">
-                <h2>Introduction</h2>
-                <p>Generative models often encounter significant challenges when dealing with data that lie on non-Euclidean manifolds. The primary issue is the manifold mismatch, where the latent space of these models is typically Euclidean...</p>
-            </section>
-            <!-- More sections follow here -->
+            <h2>Introduction</h2>
+            <p>Generative models often encounter significant challenges when dealing with data that lie on non-Euclidean manifolds. The primary issue is the manifold mismatch, where the latent space of these models is typically Euclidean. Data with intrinsic geometric and topological properties, such as those found on spheres, tori, or special orthogonal groups, cannot be accurately represented in Euclidean spaces. This mismatch leads to poor representation and significant reconstruction errors, as the models struggle to capture the true underlying structure of the data.</p>
+            
+            <p>Another critical challenge is sampling and interpolation. In Euclidean spaces, these processes are straightforward, but they do not translate well to manifold spaces. For instance, linear interpolation between points on a sphere often results in paths that do not lie on the sphere, producing unrealistic interpolations and invalid samples. This issue is further compounded by the difficulties in computing the KL-divergence for manifold-valued latent spaces. Standard Euclidean-based approximations for KL-divergence can be inaccurate and lead to suboptimal training and convergence issues.</p>
+            
+            <p>In particular, traditional VAEs often struggle with topological discrepancies between the manifold structure of the data and the Euclidean structure of the latent space. Diffusion Variational Autoencoder \( \Delta \)VAEs utilizes the transition kernels of Brownian motion on various manifolds to better model complex data topologies, including spheres, tori, and projective spaces. This model seeks to align the latent space more closely with the inherent structure of the data.</p>
+            
+            <h2>Core Components and Mathematical Formulation</h2>
+            <p>A traditional Variational Autoencoder contains:</p>
+            <ul>
+                <li>A latent space \( Z \)</li>
+                <li>A prior probability distribution \( P_Z \) on \( Z \)</li>
+                <li>A family of encoder distributions \( Q_\alpha(Z) \) on \( Z \), parameterized by \( \alpha \)</li>
+                <li>A family of decoder distributions \( P_\beta(X) \) on the data space \( X \), parameterized by \( \beta \)</li>
+                <li>Encoder and decoder neural networks</li>
+            </ul>
+            <p>The objective is to minimize the negative evidence lower bound (ELBO):</p>
+            <p>\[
+            L(x) = -E_{z \sim Q_\alpha(x)} \left[ \log P_\beta(x|z) \right] + D_{KL}(Q_\alpha(x) \parallel P_Z),
+            \]</p>
+            <p>where \( E_{z \sim Q_\alpha(x)} \left[ \log P_\beta(x|z) \right] \) is the reconstruction error and \( D_{KL}(Q_\alpha(x) \parallel P_Z) \) is the Kullback-Leibler divergence between the approximate posterior \( Q_\alpha \) and the prior \( P_Z \).</p>
+
+            <h2>Geometric Foundations and Diffusion on Manifolds</h2>
+            <p>A Riemannian manifold \((\mathcal{M}, g)\) is a smooth manifold \(\mathcal{M}\) equipped with a Riemannian metric \(g\), which is a smooth varying positive definite inner product on the tangent space at each point. The metric \(g\) allows for the measurement of geometric quantities like lengths, angles, and volumes, which are critical in defining and analyzing Brownian motion.</p>
+
+            <p>The probability measure on \( \mathcal{M} \) is defined in terms of the Riemannian volume form. The prior \( P_Z \) over the latent variables \( z \in \mathcal{M} \) is often taken to be the normalized Riemannian volume measure, denoted as \( \text{vol}_\mathcal{M} \). This measure respects the manifold's geometric structure.</p>
+            
+            <p>The encoder in a \( \Delta \)VAE maps input data \( x \in \mathcal{X} \) (data space) to a point on the manifold \( \mathcal{M} \). This is achieved through a neural network function \( f_\theta : \mathcal{X} \rightarrow \mathcal{M} \), parameterized by weights \( \theta \).</p>
+            
+            <p>Mathematically, the encoder defines a family of probability distributions \( Q_\alpha(z|x) \) over \( \mathcal{M} \) for each input \( x \), where \( \alpha \) is a parameter derived from \( x \) via the encoder network.</p>
+
+            <p>Brownian motion on \( \mathcal{M} \) is a continuous stochastic process \( \{X_t\}_{t \geq 0} \) with paths that are almost surely continuous, and which possesses the Markov property — the future evolution depends only on the present state, not on the path that got there. On a Riemannian manifold, Brownian motion is also characterized as the diffusion process generated by the Laplace-Beltrami operator.</p>
+
+            <p>The Laplace-Beltrami operator \( \Delta \) is the natural extension of the Laplacian to Riemannian manifolds and plays a central role in defining the dynamics of Brownian motion. It is defined using the metric \( g \) as follows:</p>
+            <ul>
+                <li><b>Gradient:</b> The gradient of a function \( f: \mathcal{M} \rightarrow \mathbb{R} \), denoted \( \nabla f \), is the vector field on \( \mathcal{M} \) pointing in the direction of the greatest rate of increase of \( f \), with the magnitude of the rate of increase.</li>
+                <li><b>Divergence:</b> The divergence of a vector field \( X \) on \( \mathcal{M} \), denoted \( \text{div}(X) \), measures the rate of change of volume of the flow generated by \( X \).</li>
+                <li><b>Laplace-Beltrami Operator:</b> For a smooth function \( f \), the Laplace-Beltrami operator is given by:
+                \[
+                \Delta f = \text{div}(\nabla f)
+                \]
+                It represents the divergence of the gradient of \( f \), effectively measuring how much \( f \) deviates locally from its mean value.</li>
+            </ul>
         </div>
+    </div>
         <!-- Reference section -->
         <section id="references" class="reference">
             <h2>References</h2>
