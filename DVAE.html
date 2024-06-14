@@ -227,6 +227,38 @@
                 It represents the divergence of the gradient of \( f \), effectively measuring how much \( f \) deviates locally from its mean value.</li>
             </ul>
         </div>
+            <div class="post">
+        <h1>Brownian Motion on Manifolds</h1>
+        <p>Brownian motion on \(\mathcal{M}\) can be characterized as the solution to the stochastic differential equation (SDE):</p>
+        <p>\[
+        dX_t = \sqrt{2} dB_t,
+        \]</p>
+        <p>where \(dB_t\) represents the infinitesimal Brownian increments on the tangent space of \(\mathcal{M}\) at \(X_t\). However, this representation oversimplifies the complexity since the increments need to respect the manifold's structure.</p>
+        <p>A more intrinsic characterization involves the Stratonovich SDE:</p>
+        <p>\[
+        dX_t = \sum_{i=1}^n V_i(X_t) \circ dB_t^i,
+        \]</p>
+        <p>where \( \{V_i\} \) are vector fields forming an orthonormal frame around \(X_t\), and \( \circ \) denotes the Stratonovich integration. The \(V_i\) fields ensure that the motion respects the manifold's geometry by adjusting the direction of the Brownian motion according to the curvature and topology.</p>
+        <p>We introduce Brownian motion on a Riemannian manifold to define the encoder distributions. Brownian motion is the solution to the heat equation on a manifold, providing a natural way to define transition kernels for the encoder:</p>
+        <p>\[
+        Q_\alpha(z) = p(t, x, y) = \frac{1}{(4\pi t)^{d/2}} \exp \left( -\frac{d(x, y)^2}{4t} \right)
+        \]</p>
+        <p>Where \( d(x, y) \) is the geodesic distance between points \( x \) and \( y \) on the manifold.</p>
+        <p>The transition probability \(p(t, x, y)\), which is the density function of the process being at point \(y\) at time \(t\) starting from \(x\), satisfies the heat equation associated with the Laplace-Beltrami operator:</p>
+        <p>\[
+        \frac{\partial p}{\partial t} = \Delta p.
+        \]</p>
+        <p>The heat kernel on \(\mathcal{M}\) provides a fundamental solution to this heat equation and encodes comprehensive information about the geometry and topology of \(\mathcal{M}\). It is crucial for constructing transition kernels in models like \(\Delta\)VAE, as it helps in defining a mathematically grounded mechanism for sampling and propagating through the latent manifold space.</p>
+        <p>Implementation Details:</p>
+        <ul>
+            <li>Latent Space \( Z \): Chosen to be a Riemannian manifold.</li>
+            <li>Prior \( P_Z \): The normalized Riemannian volume measure.</li>
+            <li>Encoder Distributions \( Q_\alpha(Z) \): Transition kernels of Brownian motion.</li>
+            <li>Decoder Distributions \( P_\beta(X) \): Generally assumed to be Gaussian with mean \( \beta \).</li>
+        </ul>
+        <p>For implementing VAEs with manifold latent spaces, the reparametrization trick is crucial for gradient-based optimization. To define a reparametrization trick suitable for general submanifolds of Euclidean space, we leverage the embedding of manifolds into Euclidean space (Whitney and Nash embedding theorems) to construct their method. Develop a reparametrization that works with the geometry of \( \mathcal{M} \). For example, if \( \mathcal{M} \) is a sphere, use spherical coordinates and the exponential map for reparametrization.</p>
+        <p>In addition, we approximate or analytically compute the KL divergence using the properties of the heat kernel on \( \mathcal{M} \), considering the manifold's curvature and other geometric properties.</p>
+    </div>
     </div>
         <!-- Reference section -->
         <section id="references" class="reference">
