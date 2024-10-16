@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nested Inheritance Dynamics: A Bayesian Approach</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .summary {
+            font-size: 18px;
+            color: #ccc;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .meta-info {
+            font-size: 14px;
+            color: #bbb;
+            margin: 10px auto;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            max-width: 800px;
+        }
+        .section-divider {
+            width: 100%;
+            border-top: 1px solid #333;
+            margin: 10px auto;
+        }
+        h2 {
+            font-size: 28px;
+            color: #fff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #bbb;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-bottom: 100px; 
+        }
+        .post {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .post p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        .math {
+            font-style: italic;
+            font-family: serif;
+        }
+        .reference {
+            margin-top: 20px;
+        }
+        .reference h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .reference p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        pre {
+            background-color: #1f1f1f;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: Consolas, monospace;
+            overflow-x: auto;
+            color: #fff;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: #fff;
+            text-align: right;
+            padding: 10px 20px;
+            width: calc(100% - 40px);
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid #333;
+        }
+        footer .social-icons {
+            display: flex;
+            gap: 10px;
+        }
+        footer .social-icons a {
+            color: #fff;
+            text-decoration: none;
+        }
+        footer .social-icons img {
+            width: 24px;
+            height: 24px;
+        }
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid #333;
+        }
+        nav h2 {
+            font-size: 20px;
+            margin-top: 0;
+            color: #fff;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            margin-bottom: 10px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #e0e0e0;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        nav ul li a.active,
+        nav ul li a:hover {
+            font-weight: bold;
+            color: #1e90ff;
+        }
+    </style>
+</head>
+<body>
+    <nav id="toc">
+        <h2>Contents</h2>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#algorithms">Algorithms</a></li>
+            <li><a href="#experiments">Experiments</a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
+            <li><a href="#references">References</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <header>
+            <h1>Nested Inheritance Dynamics: A Bayesian Approach</h1>
+            <div class="summary">
+                Nested Inheritance Dynamics (NIDA) is a novel algorithm that applies Bayesian nonparametrics to the study of biological inheritance, aiming to model gene expression and evolutionary patterns across multiple generations using Nested Dirichlet Processes (nDP) and hierarchical clustering methods.
+            </div>
+            <div class="section-divider"></div>
+            <div class="meta-info">
+                <div>Author: Bahman Moraffah</div>
+                <div>Estimated Reading Time: 15 min</div>
+                <div>Published: 2024</div>
+            </div>
+        </header>
+        <div class="post">
+            <section id="introduction">
+                <h2>Introduction</h2>
+                <p>Biological inheritance, a key to understanding evolution, involves the transmission of genetic material and traits across generations. This process is complex, influenced by both genetic factors and environmental conditions. Traditional methods often struggle to capture this complexity. Enter the Nested Inheritance Dynamics Algorithm (NIDA), which extends the Nested Dirichlet Process (nDP) to provide a structured yet flexible framework for modeling genetic inheritance.</p>
+            </section>
+            <section id="methodology">
+                <h2>Methodology</h2>
+                <p>NIDA uses Bayesian nonparametrics, specifically nDPs, to cluster and model gene expression over time and across generations. The algorithm combines <i>state-space models</i> and <i>hierarchical structures</i> to track individual gene expressions and their transitions within an organism's lifespan and between generations.</p>
+
+                <h3>Fine Scale: Developmental State Modeling</h3>
+                <p>The developmental state of each individual is modeled as a multidimensional vector capturing gene expressions over time, with transitions defined as:</p>
+                <pre>
+x_{t,k,d,n} = f(A_{t,k,N} x_{t,k-1,d,N}, w_{t,k,d,n})
+                </pre>
+                <p>Where \(A_{t,k,N}\) is the binary gene transition vector, representing which genes influence the transitions over time points.</p>
+
+                <h3>Coarse Scale: Heredity and Evolution</h3>
+                <p>At a higher level, NIDA models how genetic traits evolve across generations. It introduces a heredity transition tensor that governs the transfer of genetic information from one generation to the next:</p>
+                <pre>
+Xt,(K),d = F(Ht,πt(d)Xt−1,(K),πt(d), yt,(K),πt(d),(N), Wt,d)
+                </pre>
+                <p>This allows NIDA to capture the influence of both inherited traits and environmental factors.</p>
+            </section>
+            <section id="algorithms">
+                <h2>Algorithms</h2>
+                <p>NIDA leverages advanced hierarchical clustering and MCMC techniques to model biological inheritance. Below is a simplified algorithm:</p>
+                <pre>
+Algorithm 1: NIDA: Nested Inheritance Dynamics Algorithm
+Input: Prior distributions for parameters
+Output: Updated parameters
+
+1. Initialize parameters based on prior distributions.
+2. For each generation and time step:
+   a. Update parameters using MCMC or variational inference.
+   b. Sample state transitions and observations.
+   c. Integrate over latent variables and previous states.
+3. Check convergence using diagnostics.
+4. Output the posterior distribution for further analysis.
+                </pre>
+            </section>
+            <section id="experiments">
+                <h2>Experiments</h2>
+                <h3>Performance on Real-World Data</h3>
+                <p>NIDA was tested on the Gene-Tissue Expression (GTEx) dataset. It achieved a high predictive accuracy of 0.89 for gene expression levels across multiple generations, significantly outperforming traditional models such as linear regression.</p>
+
+                <h3>Synthetic Data Evaluation</h3>
+                <p>Using synthetic data, NIDA demonstrated robustness in simulating genetic inheritance and environmental interactions. The RMSE for NIDA was significantly lower (0.08) compared to baseline models (0.61).</p>
+
+                <h3>Polygenic Traits Analysis</h3>
+                <p>NIDA was also applied to polygenic traits using the UK Biobank dataset. The nonlinear model significantly outperformed the linear model in predicting trait evolution, achieving an accuracy of 95.5% for genetic trait prediction.</p>
+            </section>
+            <section id="conclusion">
+                <h2>Conclusion</h2>
+                <p>NIDA offers a flexible and powerful solution to model the dynamics of biological inheritance. By leveraging Bayesian nonparametrics and hierarchical modeling, it can capture both fine-grained gene expression and broad evolutionary patterns, enabling better prediction of future genetic traits.</p>
+            </section>
+        </div>
+        <section id="references" class="reference">
+            <h2>References</h2>
+            <p>[1] Hinton, G., Vinyals, O., & Dean, J. (2015). <a href="https://arxiv.org/abs/1503.02531">Distilling the Knowledge in a Neural Network</a>.</p>
+            <p>[2] Moraffah, B. (2024). <a href="https://arxiv.org/abs/2404.00085">Bayesian Nonparametrics: An Alternative to Deep Learning</a>.</p>
+            <p>[3] Rodriguez, A., Dunson, D., & Gelfand, A. (2008). The Nested Dirichlet Process. Journal of the American Statistical Association, 1131-1154.</p>
+            <p>[4] Lynch, M., & Walsh, B. (1998). Genetics and Analysis of Quantitative Traits. Sinauer Associates.</p>
+        </section>
+    </div>
+    <footer>
+        <p>&copy; BM's Blog. All Rights Reserved.</p>
+        <div class="social-icons">
+            <a href="https://github.com/bmoraffa"><img src="github-icon.png" alt="GitHub"></a>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sections = document.querySelectorAll("section");
+            const tocLinks = document.querySelectorAll("#toc a");
+
+            function onScroll() {
+                let currentSection = "";
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 50) {
+                        currentSection = section.getAttribute("id");
+                    }
+                });
+
+                tocLinks.forEach(link => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("href") === `#${currentSection}`) {
+                        link.classList.add("active");
+                    }
+                });
+            }
+
+            window.addEventListener("scroll", onScroll);
+        });
+    </script>
+</body>
+</html>
