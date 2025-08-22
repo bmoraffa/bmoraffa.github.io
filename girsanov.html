@@ -116,7 +116,7 @@
       <h1 class="title" id="top">Girsanov’s Theorem — Intuition & Uses</h1>
       <p class="subtitle">Change the measure, change the drift: how exponential tilting turns biased paths into driftless Brownian motion.</p>
       <div class="meta">
-        <span class="badge" id="byline" title="Author"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.33 0-8 2.17-8 4.5V21h16v-2.5C20 16.17 16.33 14 12 14Z"/></svg><span id="author">Your Name</span></span>
+        <span class="badge" id="byline" title="Author"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.33 0-8 2.17-8 4.5V21h16v-2.5C20 16.17 16.33 14 12 14Z"/></svg><span id="author">Bahman Moraffah</span></span>
         <span class="badge" title="Year"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10h5v5H7z"></path><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 16H5V5h14Z"/></svg><span id="year">2025</span></span>
         <span class="badge" id="readtime" title="Estimated reading time"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 8 6-4v12l-6 4-6-4V4l6 4Z"/></svg><span><span id="reading-mins">—</span> min read</span></span>
       </div>
@@ -246,7 +246,7 @@
       const m = window.BLOG_META || {};
       if(m.title) document.title = m.title;
       const authorEls = [document.getElementById('author'), document.getElementById('foot-author')];
-      authorEls.forEach(el => el && (el.textContent = m.author || 'Your Name'));
+      authorEls.forEach(el => el && (el.textContent = m.author || 'Bahman Moraffah'));
       const yearEls = [document.getElementById('year'), document.getElementById('foot-year')];
       yearEls.forEach(el => el && (el.textContent = m.year || new Date().getFullYear()));
       // Add link icons to headings
