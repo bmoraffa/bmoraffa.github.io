@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Girsanov’s Theorem — Intuition & Uses</title>
+  <meta name="description" content="An intuitive tour of Girsanov’s theorem: measure changes, exponential martingales, and why it matters in SDEs, pricing, and simulation." />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Girsanov’s Theorem — Intuition & Uses" />
+  <meta property="og:description" content="An intuitive tour of Girsanov’s theorem with examples, equations, and mental pictures." />
+  <meta property="og:type" content="article" />
+  <meta property="og:image" content="https://dummyimage.com/1200x630/111/fff&text=Girsanov%27s+Theorem" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0b0f14;
+      --bg-soft:#0f1520;
+      --text:#e7eef7;
+      --muted:#a3b1c6;
+      --accent:#86b7ff;
+      --accent-2:#7ee787;
+      --border: #233145;
+      --code-bg:#0a1220;
+      --card:#0e1624;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:14px;
+      --maxw: 900px;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f7f9fc; --bg-soft:#ffffff; --text:#0b1020; --muted:#42526b;
+        --accent:#2b6ef5; --accent-2:#1f8a70; --border:#e4e9f2; --code-bg:#f3f6fb; --card:#ffffff;
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial,sans-serif;line-height:1.6}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:28px}
+    header{
+      background:linear-gradient(120deg, rgba(43,110,245,.15), rgba(31,138,112,.15));
+      border-bottom:1px solid var(--border);
+    }
+    .hero{
+      max-width:var(--maxw);margin:0 auto;padding:56px 28px 34px 28px;
+    }
+    .title{
+      font-weight:800;font-size: clamp(34px, 3.8vw, 52px); line-height:1.1; letter-spacing:-.015em; margin:0 0 8px 0;
+    }
+    .subtitle{margin:8px 0 22px 0; color:var(--muted); font-size:clamp(16px,1.5vw,18px)}
+    .meta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;color:var(--muted);font-size:14px}
+    .badge{
+      display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border:1px solid var(--border);
+      border-radius:999px;background:var(--bg-soft)
+    }
+    .badge svg{width:16px;height:16px;opacity:.9}
+    .card{
+      background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .body-grid{display:grid;grid-template-columns: 260px 1fr; gap:28px}
+    @media (max-width: 980px){ .body-grid{grid-template-columns: 1fr} }
+
+    nav.toc{position:sticky;top:22px;height:max-content;padding:18px}
+    nav.toc h3{margin:4px 0 8px 0;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    nav.toc a{display:block;padding:8px 10px;border-radius:8px;color:var(--text);border:1px solid transparent}
+    nav.toc a:hover{background:var(--bg-soft);border-color:var(--border)}
+    nav.toc a small{color:var(--muted)}
+    nav.toc .toc-note{font-size:12px;color:var(--muted);margin-top:10px}
+
+    article{padding:26px}
+    article h2{margin:28px 0 8px 0; font-size: clamp(24px,2.2vw,28px)}
+    article h3{margin:22px 0 6px 0; font-size: clamp(18px,2vw,22px)}
+    article p{margin:12px 0}
+    .lead{font-size:18px;color:var(--text);opacity:.95}
+    .callout{
+      border-left:3px solid var(--accent); background:var(--bg-soft); padding:14px 16px; border-radius:10px; margin:18px 0;
+    }
+    .keylist li{margin:6px 0}
+    code, kbd, pre{font-family:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    pre{background:var(--code-bg); padding:16px; border-radius:12px; overflow:auto; border:1px solid var(--border)}
+    .equation{background:var(--bg-soft); border:1px dashed var(--border); padding:10px 14px; border-radius:10px; margin:16px 0}
+    .foot{margin-top:40px;padding:18px;color:var(--muted);font-size:14px;border-top:1px solid var(--border)}
+    .anchor{
+      visibility:hidden; margin-left:.25em; text-decoration:none; font-weight:600; color:var(--accent);
+    }
+    h2:hover .anchor, h3:hover .anchor{visibility:visible}
+    .pill{
+      display:inline-block; padding:2px 10px; border-radius:999px; background:var(--bg-soft); border:1px solid var(--border);
+      font-size:12px; color:var(--muted)
+    }
+  </style>
+
+  <!-- MathJax for LaTeX rendering -->
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Page configuration: edit these fields -->
+  <script>
+    window.BLOG_META = {
+      title: "Girsanov’s Theorem — Intuition & Uses",
+      author: "Your Name",
+      year: "2025",                          // change if needed
+      wordsPerMinute: 220                    // reading speed assumption
+    };
+  </script>
+</head>
+<body>
+
+  <header>
+    <div class="hero">
+      <h1 class="title" id="top">Girsanov’s Theorem — Intuition & Uses</h1>
+      <p class="subtitle">Change the measure, change the drift: how exponential tilting turns biased paths into driftless Brownian motion.</p>
+      <div class="meta">
+        <span class="badge" id="byline" title="Author"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.33 0-8 2.17-8 4.5V21h16v-2.5C20 16.17 16.33 14 12 14Z"/></svg><span id="author">Your Name</span></span>
+        <span class="badge" title="Year"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10h5v5H7z"></path><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 16H5V5h14Z"/></svg><span id="year">2025</span></span>
+        <span class="badge" id="readtime" title="Estimated reading time"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 8 6-4v12l-6 4-6-4V4l6 4Z"/></svg><span><span id="reading-mins">—</span> min read</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="body-grid">
+      <nav class="toc card">
+        <h3>On this page</h3>
+        <a href="#what-it-is">What it is <small>(one line)</small></a>
+        <a href="#intuition">Intuition</a>
+        <a href="#statement">Classic 1D statement</a>
+        <a href="#sde">How it changes an SDE</a>
+        <a href="#example">Concrete example</a>
+        <a href="#why-useful">Why it’s useful</a>
+        <a href="#cant-do">What it can’t do</a>
+        <a href="#proof">Proof sketch</a>
+        <a href="#eli5">ELI5 picture</a>
+        <p class="toc-note">Tip: click the § icons to link to a section.</p>
+      </nav>
+
+      <article id="article" class="card article-body">
+        <div style="padding:6px 26px 0 26px">
+          <span class="pill">Stochastic calculus</span>
+          <span class="pill">Measure theory</span>
+          <span class="pill">Brownian motion</span>
+        </div>
+
+        <div style="padding:0 26px">
+          <p class="lead callout">
+            <strong>TL;DR</strong> — Girsanov’s theorem lets you <em>reweight path probabilities</em> so a process that had a drift can be viewed as one <em>without</em> that drift (or with a different drift). It’s the continuous-time version of changing the bias of a random walk by tilting likelihoods.
+          </p>
+
+          <h2 id="what-it-is">What it’s about <span class="anchor" aria-hidden="true">§</span></h2>
+          <p>Girsanov’s theorem says you can <em>tilt</em> probabilities so that a process that had a drift can be seen, under a new measure, as one with a modified drift (often zero). In continuous time, it’s how we “change the measure” so that Brownian motion gains or loses a drift.</p>
+
+          <h2 id="intuition">Intuition <span class="anchor" aria-hidden="true">§</span></h2>
+          <p>Imagine a biased-coin random walk. If the coin favors heads, paths that go up are more likely. By <em>reweighting</em> each path with a likelihood ratio (importance sampling), you can make those same paths look as if they were generated with a different bias. Girsanov is the Brownian-motion analogue: multiply path weights by an <em>exponential martingale</em> so the apparent drift changes.</p>
+          <p>“Tilting toward up-moves” corresponds to multiplying by an exponential factor that depends on how much the path moved up. After reweighting, the same raw squiggles behave—under the new lens—like a Brownian motion with the drift you want.</p>
+
+          <h2 id="statement">Classic 1D statement (minimal form) <span class="anchor" aria-hidden="true">§</span></h2>
+          <div class="equation">
+            Let \( (W_t)_{t\ge0} \) be a standard Brownian motion under \( \mathbb P \). Take an adapted process \( \theta_t \) satisfying a mild integrability condition (e.g. <em>Novikov’s condition</em>):<br><br>
+            \[
+              \mathbb E_{\mathbb P}\!\left[\exp\!\Big(\tfrac12\!\int_0^T \theta_s^2\,ds\Big)\right] < \infty.
+            \]<br>
+            Define the <strong>exponential martingale</strong> (likelihood ratio)
+            \[
+              Z_t = \exp\!\Big(\,\int_0^t \theta_s\, dW_s \;-\; \tfrac12\!\int_0^t \theta_s^2\, ds\Big).
+            \]
+            Use \(Z_t\) to define a new measure \( \mathbb Q \) on \( \mathcal F_t \) by \( \frac{d\mathbb Q}{d\mathbb P}\big|_{\mathcal F_t} = Z_t \).
+            Then
+            \[
+              \widetilde W_t := W_t - \int_0^t \theta_s\, ds
+            \]
+            is a standard Brownian motion under \( \mathbb Q \).
+          </div>
+          <p><em>Translation:</em> subtracting \( \int \theta\,ds \) from \( W \) removes the drift \( \int\theta\,ds \) once you look under the reweighted probabilities \( \mathbb Q \).</p>
+
+          <h2 id="sde">How it changes an SDE <span class="anchor" aria-hidden="true">§</span></h2>
+          <p>If under \( \mathbb P \)
+            \[
+              dX_t = b_t\,dt + \sigma_t\, dW_t,
+            \]
+            apply Girsanov with the same \(Z_t\). Under \( \mathbb Q \), \( dW_t = d\widetilde W_t + \theta_t\,dt \), so
+            \[
+              dX_t = \big(b_t + \sigma_t \theta_t\big) dt + \sigma_t\, d\widetilde W_t.
+            \]
+            Choosing \( \theta_t = -\sigma_t^{-1} b_t \) (when invertible) kills the drift:
+            \[
+              dX_t = \sigma_t\, d\widetilde W_t \quad \text{under } \mathbb Q.
+            \]
+          </p>
+
+          <h2 id="example">A tiny concrete example <span class="anchor" aria-hidden="true">§</span></h2>
+          <div class="equation">
+            Let \( X_t = W_t + \mu t \) under \( \mathbb P \) (so \( dX_t = \mu\,dt + dW_t \)). Take \( \theta \equiv -\mu \). Then
+            \[
+              Z_t = \exp\!\Big(-\mu W_t - \tfrac12 \mu^2 t\Big), \qquad
+              \widetilde W_t = W_t - \!\int_0^t (-\mu)\,ds = W_t + \mu t.
+            \]
+            Under \( \mathbb Q \), \( \widetilde W \) is Brownian and \( X_t = \widetilde W_t \) has <em>no drift</em>.
+          </div>
+
+          <h2 id="why-useful">Why it’s useful <span class="anchor" aria-hidden="true">§</span></h2>
+          <ul class="keylist">
+            <li><strong>Risk-neutral pricing (quant finance):</strong> For \( dS_t/S_t = \mu\,dt + \sigma\,dW_t \), choose \( \theta = -(\mu - r)/\sigma \). Under the risk-neutral \( \mathbb Q \), \( dS_t/S_t = r\,dt + \sigma\,d\widetilde W_t \). Discounted prices become martingales.</li>
+            <li><strong>Filtering & statistics:</strong> Treat different drift hypotheses via likelihood ratios; enables maximum likelihood for SDE parameters.</li>
+            <li><strong>Rare-event simulation:</strong> Importance sampling with the right exponential tilt reduces variance.</li>
+          </ul>
+
+          <h2 id="cant-do">What it cannot do <span class="anchor" aria-hidden="true">§</span></h2>
+          <ul class="keylist">
+            <li>It <strong>doesn’t change volatility</strong> or quadratic variation. Roughness stays the same; only drift shifts.</li>
+            <li>It <strong>can’t create or remove jumps</strong>. Jump processes need extra machinery.</li>
+            <li>Needs <strong>absolute continuity</strong> (conditions like Novikov/Kazamaki). Wild drifts can break the change of measure.</li>
+          </ul>
+
+          <h2 id="proof">Proof sketch you can hold onto <span class="anchor" aria-hidden="true">§</span></h2>
+          <ol>
+            <li>Define \(Z_t\); check via Itô that it’s a martingale (under Novikov).</li>
+            <li>Use \(Z_t\) as the Radon–Nikodym derivative to define \( \mathbb Q \).</li>
+            <li>Show \( \widetilde W_t = W_t - \!\int_0^t \theta_s ds \) has zero \( \mathbb Q \)-drift and quadratic variation \( \langle \widetilde W \rangle_t = t \).</li>
+            <li>Invoke <em>Lévy’s characterization</em>: that makes \( \widetilde W \) Brownian under \( \mathbb Q \).</li>
+          </ol>
+
+          <h2 id="eli5">Mental picture (ELI5) <span class="anchor" aria-hidden="true">§</span></h2>
+          <p>You’re wearing tinted glasses that favor “up” paths. Put on a different tint—multiply each path’s weight by a simple exponential—and the same squiggles now <em>look</em> like they were drawn with no up-bias. That’s Girsanov.</p>
+
+          <div class="callout">
+            <strong>Further reading.</strong> For multi-dimensional and jump-diffusion versions, look up Girsanov’s theorem for continuous local martingales, Kazamaki’s condition, and the Girsanov–Meyer theorem.
+          </div>
+        </div>
+
+        <div class="foot">
+          <span>© <span id="foot-year">2025</span> · <span id="foot-author">Your Name</span></span>
+          <span style="margin-left:10px">· <a href="#top">Back to top ↑</a></span>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <script>
+    // Apply BLOG_META values to the DOM
+    (function applyMeta(){
+      const m = window.BLOG_META || {};
+      if(m.title) document.title = m.title;
+      const authorEls = [document.getElementById('author'), document.getElementById('foot-author')];
+      authorEls.forEach(el => el && (el.textContent = m.author || 'Your Name'));
+      const yearEls = [document.getElementById('year'), document.getElementById('foot-year')];
+      yearEls.forEach(el => el && (el.textContent = m.year || new Date().getFullYear()));
+      // Add link icons to headings
+      for(const h of document.querySelectorAll('article h2, article h3')){
+        const id = h.id || h.textContent.toLowerCase().replace(/[^\w]+/g,'-').replace(/(^-|-$)/g,'');
+        h.id = id;
+        const a = document.createElement('a');
+        a.className = 'anchor'; a.href = '#' + id; a.setAttribute('aria-label','Link to section');
+        a.textContent = '§';
+        h.appendChild(a);
+      }
+    })();
+
+    // Estimate reading time based on visible article text
+    (function readingTime(){
+      const wpm = (window.BLOG_META && BLOG_META.wordsPerMinute) || 220;
+      const article = document.querySelector('.article-body');
+      if(!article) return;
+      const text = article.innerText || article.textContent || '';
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+      const mins = Math.max(1, Math.round(words / wpm));
+      const target = document.getElementById('reading-mins');
+      if(target) target.textContent = String(mins);
+    })();
+  </script>
+</body>
+</html>
